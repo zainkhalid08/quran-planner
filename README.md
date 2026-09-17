@@ -7,6 +7,18 @@ Get a day by day plan, to finish reading the Quran in x number of days. Export t
   </a>
 </p> -->
 
+## Screenshots
+
+<p align="center">
+  <img src="assets/images/home-page.png" alt="Home Page" width="48%" />
+  <img src="assets/images/dark-mode.png" alt="Dark Mode" width="48%" />
+</p>
+
+<p align="center">
+  <img src="assets/images/plan.png" alt="Generated Plan" width="48%" />
+  <img src="assets/images/download-plan.png" alt="Download Plan" width="48%" />
+</p>
+
 ## Quick Start
 
 Open [`quran-planner.html`](quran-planner.html) directly in any modern web browser, or serve it locally:
