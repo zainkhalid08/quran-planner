@@ -21,7 +21,7 @@ Get a day by day plan, to finish reading the Quran in x number of days. Export t
 
 ## Quick Start
 
-Open [`quran-planner.html`](quran-planner.html) directly in any modern web browser, or serve it locally:
+Open [`index.html`](index.html) directly in any modern web browser, or serve it locally:
 
 ```bash
 python3 -m http.server 5173
@@ -29,7 +29,7 @@ python3 -m http.server 5173
 
 Then visit:
 ```
-http://localhost:5173/quran-planner.html
+http://localhost:5173/index.html
 ```
 
 ## Tech Stack

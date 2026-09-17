@@ -663,6 +663,158 @@
       background: var(--accent-bg);
       color: var(--accent);
     }
+
+    /* ── Mobile Responsive Optimizations ── */
+    @media (max-width: 540px) {
+      body {
+        padding: 20px 12px 48px;
+      }
+
+      header {
+        margin-bottom: 24px;
+      }
+
+      header h1 {
+        font-size: 2.1rem;
+        letter-spacing: -0.5px;
+      }
+
+      header p {
+        font-size: 0.85rem;
+      }
+
+      .card {
+        padding: 20px 16px;
+        border-radius: var(--radius-md);
+      }
+
+      .pill-row {
+        gap: 6px;
+      }
+
+      .pill {
+        padding: 6px 10px;
+        font-size: 0.74rem;
+      }
+
+      .stats {
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+
+      .stat {
+        padding: 10px 6px;
+      }
+
+      .stat-val {
+        font-size: 1.15rem;
+      }
+
+      .stat-lbl {
+        font-size: 0.67rem;
+      }
+
+      .plan-header {
+        grid-template-columns: 86px 1fr auto;
+        padding: 0 10px 6px;
+        gap: 6px;
+        font-size: 0.68rem;
+      }
+
+      .day-row {
+        grid-template-columns: 86px 1fr auto;
+        padding: 10px 10px;
+        gap: 6px;
+      }
+
+      .day-num {
+        font-size: 0.78rem;
+      }
+
+      .day-date {
+        font-size: 0.68rem;
+      }
+
+      .today-pill {
+        font-size: 0.58rem;
+        padding: 1px 4px;
+      }
+
+      .surah-name {
+        font-size: 0.84rem;
+      }
+
+      .surah-meta {
+        font-size: 0.7rem;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      .surah-arabic {
+        font-size: 0.78rem;
+      }
+
+      .ayah-badge {
+        font-size: 0.72rem;
+        padding: 4px 7px;
+      }
+
+      .results-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .results-actions .btn-download {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 380px) {
+      body {
+        padding: 16px 8px 40px;
+      }
+
+      header h1 {
+        font-size: 1.85rem;
+      }
+
+      .card {
+        padding: 16px 12px;
+      }
+
+      .plan-header {
+        grid-template-columns: 76px 1fr auto;
+        gap: 4px;
+        padding: 0 8px 4px;
+      }
+
+      .day-row {
+        grid-template-columns: 76px 1fr auto;
+        padding: 8px 8px;
+        gap: 4px;
+      }
+
+      .day-num {
+        font-size: 0.74rem;
+      }
+
+      .day-date {
+        font-size: 0.64rem;
+      }
+
+      .surah-name {
+        font-size: 0.8rem;
+      }
+
+      .surah-meta {
+        font-size: 0.66rem;
+      }
+
+      .ayah-badge {
+        font-size: 0.68rem;
+        padding: 3px 6px;
+      }
+    }
   </style>
 </head>
 
@@ -748,7 +900,7 @@
           <path d="M7.5 10.5L3.5 6.5H6V1.5H9V6.5H11.5L7.5 10.5Z" fill="currentColor" />
           <path d="M2 12.5H13V13.5H2V12.5Z" fill="currentColor" />
         </svg>
-        Download as Image
+        Download Image
       </button>
       <button class="btn-download" id="clearPlanBtn" onclick="clearPlan()" title="Clear this plan and create a new one">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
