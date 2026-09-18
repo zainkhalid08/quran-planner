@@ -1467,11 +1467,20 @@
           logging: false,
         });
 
-        const link = document.createElement('a');
         const days = document.getElementById('statDays').textContent;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        if (!blob) {
+          throw new Error('Canvas to Blob conversion failed');
+        }
+
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
         link.download = `quran-plan-${days}days.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = objectUrl;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
       } catch (err) {
         console.error('Download failed:', err);
         alert('Could not generate image. Please try again.');
@@ -1485,7 +1494,7 @@
             <path d="M7.5 10.5L3.5 6.5H6V1.5H9V6.5H11.5L7.5 10.5Z" fill="currentColor" />
             <path d="M2 12.5H13V13.5H2V12.5Z" fill="currentColor" />
           </svg>
-          Download as Image`;
+          Download Image`;
       }
     }
 
