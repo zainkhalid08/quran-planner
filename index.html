@@ -65,16 +65,48 @@
       }
     };
 
-    (function () {
-      try {
-        const stored = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME) || 'system';
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || (stored === 'system' && prefersDark)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+    /* ── Storage Helper ── */
+    const Storage = {
+      getItem(key, fallback = null) {
+        try {
+          const val = localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        } catch (_) {
+          return fallback;
         }
-      } catch (_) { }
+      },
+      getJSON(key, fallback = null) {
+        try {
+          const val = localStorage.getItem(key);
+          return val ? JSON.parse(val) : fallback;
+        } catch (_) {
+          return fallback;
+        }
+      },
+      setItem(key, val) {
+        try {
+          localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val));
+        } catch (err) {
+          console.warn('Storage set failed:', err);
+        }
+      },
+      removeItem(key) {
+        try {
+          localStorage.removeItem(key);
+        } catch (err) {
+          console.warn('Storage remove failed:', err);
+        }
+      }
+    };
+
+    (function () {
+      const stored = Storage.getItem(CONSTANTS.STORAGE_KEYS.THEME, 'system');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored === 'dark' || (stored === 'system' && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     })();
   </script>
 
@@ -1178,25 +1210,43 @@
       { number: 114, name: "An-Nas", arabic: "الناس", ayahs: 6, ayahWords: [8,2,2,4,5,3] }
     ];
 
+    // Cached DOM elements
+    const DOM = {
+      days: document.getElementById('days'),
+      startSurah: document.getElementById('startSurah'),
+      startAyah: document.getElementById('startAyah'),
+      results: document.getElementById('results'),
+      resultsActions: document.getElementById('resultsActions'),
+      resultsFooter: document.getElementById('resultsFooter'),
+      planRows: document.getElementById('planRows'),
+      statDays: document.getElementById('statDays'),
+      statRemaining: document.getElementById('statRemaining'),
+      statAvg: document.getElementById('statAvg'),
+      pickDatePill: document.getElementById('pickDatePill'),
+      pickDateInput: document.getElementById('pickDateInput'),
+      ramadanPill: document.getElementById('ramadanPill'),
+      ramadanNote: document.getElementById('ramadanNote'),
+      downloadBtn: document.getElementById('downloadBtn'),
+      card: document.querySelector('.card')
+    };
+
     // Populate surah dropdown
     (function () {
-      const sel = document.getElementById('startSurah');
       SURAHS.forEach((s, i) => {
         const opt = document.createElement('option');
         opt.value = i;
         opt.textContent = `${s.number}. ${s.name}`;
-        sel.appendChild(opt);
+        DOM.startSurah.appendChild(opt);
       });
       updateAyahMax();
     })();
 
     function updateAyahMax() {
-      const idx = parseInt(document.getElementById('startSurah').value);
+      const idx = parseInt(DOM.startSurah.value);
       const max = SURAHS[idx].ayahs;
-      const inp = document.getElementById('startAyah');
-      inp.max = max;
-      inp.placeholder = `1 – ${max}`;
-      if (inp.value && parseInt(inp.value) > max) inp.value = max;
+      DOM.startAyah.max = max;
+      DOM.startAyah.placeholder = `1 – ${max}`;
+      if (DOM.startAyah.value && parseInt(DOM.startAyah.value) > max) DOM.startAyah.value = max;
     }
 
     function ayahsBefore(surahIdx, ayahOffset) {
@@ -1206,11 +1256,11 @@
     }
 
     function generatePlan(customStartDate, skipScroll) {
-      const days = parseInt(document.getElementById('days').value);
+      const days = parseInt(DOM.days.value);
       if (!days || days < 1) { alert('Please enter a valid number of days.'); return; }
 
-      const startSurahIdx = parseInt(document.getElementById('startSurah').value);
-      const rawAyah = parseInt(document.getElementById('startAyah').value) || 1;
+      const startSurahIdx = parseInt(DOM.startSurah.value);
+      const rawAyah = parseInt(DOM.startAyah.value) || 1;
       const startAyah = Math.max(1, Math.min(rawAyah, SURAHS[startSurahIdx].ayahs));
 
       const alreadyRead = ayahsBefore(startSurahIdx, startAyah - 1);
@@ -1229,25 +1279,20 @@
       const planStartDate = customStartDate ? new Date(customStartDate) : new Date();
       planStartDate.setHours(0, 0, 0, 0);
 
-      // Save plan details to localStorage
-      try {
-        const savedPlanData = {
-          days,
-          startSurahIdx,
-          startAyah,
-          startDate: planStartDate.toISOString()
-        };
-        localStorage.setItem(CONSTANTS.STORAGE_KEYS.PLAN, JSON.stringify(savedPlanData));
-      } catch (err) {
-        console.warn('Unable to save plan to localStorage:', err);
-      }
+      // Save plan details to Storage
+      const savedPlanData = {
+        days,
+        startSurahIdx,
+        startAyah,
+        startDate: planStartDate.toISOString()
+      };
+      Storage.setItem(CONSTANTS.STORAGE_KEYS.PLAN, savedPlanData);
 
-      document.getElementById('statDays').textContent = days;
-      document.getElementById('statRemaining').textContent = remaining.toLocaleString();
-      document.getElementById('statAvg').textContent = Math.round(remaining / days).toLocaleString();
+      DOM.statDays.textContent = days;
+      DOM.statRemaining.textContent = remaining.toLocaleString();
+      DOM.statAvg.textContent = Math.round(remaining / days).toLocaleString();
 
-      const rows = document.getElementById('planRows');
-      rows.innerHTML = '';
+      DOM.planRows.innerHTML = '';
 
       const currentDayDate = new Date();
       currentDayDate.setHours(0, 0, 0, 0);
@@ -1312,94 +1357,73 @@
         ${CONFIG.showDailyAyahsCount ? `<span class="daily-stat" title="Ayahs to read">${dayAyahsCount}</span>` : ''}
       </div>
     `;
-        rows.appendChild(row);
+        DOM.planRows.appendChild(row);
       }
 
-      const resultsEl = document.getElementById('results');
-      resultsEl.style.display = 'block';
+      DOM.results.style.display = 'block';
       // Re-trigger animation on regenerate
-      resultsEl.style.animation = 'none';
-      void resultsEl.offsetWidth;
-      resultsEl.style.animation = '';
+      DOM.results.style.animation = 'none';
+      void DOM.results.offsetWidth;
+      DOM.results.style.animation = '';
 
-      const actionsEl = document.getElementById('resultsActions');
-      if (actionsEl) actionsEl.style.display = 'flex';
+      if (DOM.resultsActions) DOM.resultsActions.style.display = 'flex';
 
-      const footerEl = document.getElementById('resultsFooter');
-      if (footerEl) {
+      if (DOM.resultsFooter) {
         const dateStr = planStartDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-        footerEl.textContent = `Generated on ${dateStr}`;
+        DOM.resultsFooter.textContent = `Generated on ${dateStr}`;
       }
 
       if (!skipScroll) {
-        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        DOM.results.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
     function clearPlan() {
-      try {
-        localStorage.removeItem(CONSTANTS.STORAGE_KEYS.PLAN);
-      } catch (err) {
-        console.warn('Unable to clear localStorage:', err);
-      }
+      Storage.removeItem(CONSTANTS.STORAGE_KEYS.PLAN);
 
       // Reset days input and all pill selections
-      const daysInput = document.getElementById('days');
-      if (daysInput) daysInput.value = '';
+      if (DOM.days) DOM.days.value = '';
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      const pickDateInput = document.getElementById('pickDateInput');
-      if (pickDateInput) pickDateInput.value = '';
+      if (DOM.pickDateInput) DOM.pickDateInput.value = '';
       clearRamadanNote();
 
       // Reset starting surah & ayah to initial state
-      const startSurah = document.getElementById('startSurah');
-      if (startSurah) {
-        startSurah.value = 0;
+      if (DOM.startSurah) {
+        DOM.startSurah.value = 0;
         updateAyahMax();
       }
-      const startAyah = document.getElementById('startAyah');
-      if (startAyah) startAyah.value = '';
+      if (DOM.startAyah) DOM.startAyah.value = '';
 
-      const resultsEl = document.getElementById('results');
-      resultsEl.style.display = 'none';
-      const actionsEl = document.getElementById('resultsActions');
-      if (actionsEl) actionsEl.style.display = 'none';
-      document.getElementById('planRows').innerHTML = '';
-      const footerEl = document.getElementById('resultsFooter');
-      if (footerEl) footerEl.textContent = '';
-      const cardEl = document.querySelector('.card');
-      if (cardEl) {
-        cardEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      DOM.results.style.display = 'none';
+      if (DOM.resultsActions) DOM.resultsActions.style.display = 'none';
+      DOM.planRows.innerHTML = '';
+      if (DOM.resultsFooter) DOM.resultsFooter.textContent = '';
+      if (DOM.card) {
+        DOM.card.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
     function loadSavedPlan() {
-      try {
-        const raw = localStorage.getItem(CONSTANTS.STORAGE_KEYS.PLAN);
-        if (!raw) return;
-        const saved = JSON.parse(raw);
-        if (!saved || !saved.days || !saved.startDate) return;
+      const saved = Storage.getJSON(CONSTANTS.STORAGE_KEYS.PLAN);
+      if (!saved || !saved.days || !saved.startDate) return;
 
-        // Restore form inputs
-        document.getElementById('days').value = saved.days;
-        if (typeof saved.startSurahIdx !== 'undefined') {
-          document.getElementById('startSurah').value = saved.startSurahIdx;
-          updateAyahMax();
-        }
-        if (saved.startAyah && saved.startAyah > 1) {
-          document.getElementById('startAyah').value = saved.startAyah;
-        }
-
-        // Highlight matching preset pill if applicable
-        document.querySelectorAll('.pill[data-days]').forEach(p => {
-          p.classList.toggle('active', p.dataset.days === String(saved.days));
-        });
-
-        // Re-generate plan using the original start date (skip automatic jump scroll on initial load)
-        generatePlan(saved.startDate, true);
-      } catch (err) {
-        console.warn('Unable to load saved plan:', err);
+      // Restore form inputs
+      DOM.days.value = saved.days;
+      if (typeof saved.startSurahIdx !== 'undefined') {
+        DOM.startSurah.value = saved.startSurahIdx;
+        updateAyahMax();
       }
+      if (saved.startAyah && saved.startAyah > 1) {
+        DOM.startAyah.value = saved.startAyah;
+      }
+
+      // Highlight matching preset pill if applicable
+      document.querySelectorAll('.pill[data-days]').forEach(p => {
+        p.classList.toggle('active', p.dataset.days === String(saved.days));
+      });
+
+      // Re-generate plan using the original start date (skip automatic jump scroll on initial load)
+      generatePlan(saved.startDate, true);
     }
 
     // Calculate the next Ramadan 1st using the Umm al-Qura calendar
@@ -1426,9 +1450,10 @@
     }
 
     function clearRamadanNote() {
-      const note = document.getElementById('ramadanNote');
-      note.style.display = 'none';
-      note.innerHTML = '';
+      if (DOM.ramadanNote) {
+        DOM.ramadanNote.style.display = 'none';
+        DOM.ramadanNote.innerHTML = '';
+      }
     }
 
     // Fixed-duration pills (15 days / 1 month / etc.)
@@ -1436,13 +1461,13 @@
       pill.addEventListener('click', () => {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        document.getElementById('days').value = pill.dataset.days;
+        DOM.days.value = pill.dataset.days;
         clearRamadanNote();
       });
     });
 
     // Dynamic "Before Ramadan" pill
-    document.getElementById('ramadanPill').addEventListener('click', () => {
+    DOM.ramadanPill.addEventListener('click', () => {
       const ramadanStart = getNextRamadanStart();
       if (!ramadanStart) {
         alert("Couldn't calculate Ramadan's start date on this device/browser.");
@@ -1453,66 +1478,62 @@
       today.setHours(0, 0, 0, 0);
       const daysUntil = Math.round((ramadanStart - today) / (1000 * 60 * 60 * 24));
 
-      document.getElementById('days').value = daysUntil;
+      DOM.days.value = daysUntil;
 
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      document.getElementById('ramadanPill').classList.add('active');
+      DOM.ramadanPill.classList.add('active');
 
       const dateStr = ramadanStart.toLocaleDateString('en-GB', {
         day: 'numeric', month: 'long', year: 'numeric'
       });
-      const note = document.getElementById('ramadanNote');
-      note.innerHTML = `
+      DOM.ramadanNote.innerHTML = `
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M7.5 1.5C4.19 1.5 1.5 4.19 1.5 7.5C1.5 10.81 4.19 13.5 7.5 13.5C10.81 13.5 13.5 10.81 13.5 7.5C13.5 4.19 10.81 1.5 7.5 1.5Z" stroke="currentColor" stroke-width="1.3"/>
           <path d="M7.5 4.75V7.75L9.5 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
         </svg>
         <span><strong>Ramadan is expected to begin around ${dateStr}</strong> (${daysUntil} day${daysUntil === 1 ? '' : 's'} from today). Actual start depends on moon sighting and may shift by a day or more.</span>
       `;
-      note.style.display = 'flex';
+      DOM.ramadanNote.style.display = 'flex';
     });
 
     // Keep pills in sync if user types a matching number manually
-    document.getElementById('days').addEventListener('input', () => {
-      const val = document.getElementById('days').value;
+    DOM.days.addEventListener('input', () => {
+      const val = DOM.days.value;
       document.querySelectorAll('.pill[data-days]').forEach(p => {
         p.classList.toggle('active', p.dataset.days === val);
       });
-      document.getElementById('ramadanPill').classList.remove('active');
-      pickDatePill.classList.remove('active');
+      DOM.ramadanPill.classList.remove('active');
+      DOM.pickDatePill.classList.remove('active');
       clearRamadanNote();
     });
-
-    const pickDatePill = document.getElementById('pickDatePill');
-    const pickDateInput = document.getElementById('pickDateInput');
 
     // Restrict picker to sensible bounds: tomorrow through ~17 years out (Quran max ~6236 days)
     (function setDateBounds() {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const maxDate = new Date();
-      maxDate.setDate(maxDate.getDate() + 6236);
+      maxDate.setDate(maxDate.getDate() + CONSTANTS.TOTAL_AYAHS);
 
       const toISO = d => d.toISOString().split('T')[0];
-      pickDateInput.min = toISO(tomorrow);
-      pickDateInput.max = toISO(maxDate);
+      DOM.pickDateInput.min = toISO(tomorrow);
+      DOM.pickDateInput.max = toISO(maxDate);
     })();
 
-    pickDatePill.addEventListener('click', () => {
-      if (typeof pickDateInput.showPicker === 'function') {
-        pickDateInput.showPicker();
+    DOM.pickDatePill.addEventListener('click', () => {
+      if (typeof DOM.pickDateInput.showPicker === 'function') {
+        DOM.pickDateInput.showPicker();
       } else {
-        pickDateInput.click(); // fallback for browsers without showPicker()
+        DOM.pickDateInput.click(); // fallback for browsers without showPicker()
       }
     });
 
-    pickDateInput.addEventListener('change', () => {
-      if (!pickDateInput.value) return;
+    DOM.pickDateInput.addEventListener('change', () => {
+      if (!DOM.pickDateInput.value) return;
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const picked = new Date(pickDateInput.value + 'T00:00:00');
+      const picked = new Date(DOM.pickDateInput.value + 'T00:00:00');
       picked.setHours(0, 0, 0, 0);
 
       const daysUntil = Math.round((picked - today) / (1000 * 60 * 60 * 24));
@@ -1522,21 +1543,21 @@
         return;
       }
 
-      document.getElementById('days').value = daysUntil;
+      DOM.days.value = daysUntil;
 
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      pickDatePill.classList.add('active');
+      DOM.pickDatePill.classList.add('active');
 
       clearRamadanNote();
     });
 
     // Enter key support
-    document.getElementById('days').addEventListener('keydown', e => {
+    DOM.days.addEventListener('keydown', e => {
       if (e.key === 'Enter') generatePlan();
     });
 
     async function downloadPlan() {
-      const btn = document.getElementById('downloadBtn');
+      const btn = DOM.downloadBtn;
 
       btn.disabled = true;
       btn.innerHTML = `
@@ -1547,10 +1568,8 @@
         </svg>
         Generating image…`;
 
-      const resultsEl = document.getElementById('results');
-
       // Clone the exact same rendered results card to preserve responsive UI while exporting at standard width
-      const card = resultsEl.cloneNode(true);
+      const card = DOM.results.cloneNode(true);
       card.id = 'resultsExportClone';
       card.style.position = 'fixed';
       card.style.top = '-9999px';
@@ -1578,7 +1597,7 @@
           logging: false,
         });
 
-        const days = document.getElementById('statDays').textContent;
+        const days = DOM.statDays.textContent;
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         if (!blob) {
           throw new Error('Canvas to Blob conversion failed');
@@ -1626,9 +1645,7 @@
     }
 
     function setTheme(preference) {
-      try {
-        localStorage.setItem(CONSTANTS.STORAGE_KEYS.THEME, preference);
-      } catch (_) { }
+      Storage.setItem(CONSTANTS.STORAGE_KEYS.THEME, preference);
       applyTheme(preference);
     }
 
@@ -1638,14 +1655,14 @@
 
     // React dynamically when system appearance changes and 'system' is active
     mediaQuery.addEventListener('change', () => {
-      const currentPref = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME) || 'system';
+      const currentPref = Storage.getItem(CONSTANTS.STORAGE_KEYS.THEME, 'system');
       if (currentPref === 'system') {
         applyTheme('system');
       }
     });
 
     // Initialize theme UI state (defaults to 'system')
-    const currentThemePref = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME) || 'system';
+    const currentThemePref = Storage.getItem(CONSTANTS.STORAGE_KEYS.THEME, 'system');
     applyTheme(currentThemePref);
 
     // ── Tooltip handler for .daily-stat (tap on mobile or click on desktop) ──
