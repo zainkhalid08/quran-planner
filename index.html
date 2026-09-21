@@ -1163,12 +1163,21 @@
       { number: 114, name: "An-Nas", arabic: "الناس", ayahs: 6 }
     ];
 
+    /* ── Constants ── */
+    const CONSTANTS = {
+      TOTAL_AYAHS: 6236,
+      TOTAL_SURAHS: 114,
+      STORAGE_KEYS: {
+        PLAN: 'quran_planner_saved_plan',
+        THEME: 'theme_preference'
+      }
+    };
+    const TOTAL = CONSTANTS.TOTAL_AYAHS;
+
     /* ── Configuration ── */
     const CONFIG = {
       showDailyAyahsCount: false
     };
-
-    const TOTAL = 6236;
 
     // Populate surah dropdown
     (function () {
@@ -1229,7 +1238,7 @@
           startAyah,
           startDate: planStartDate.toISOString()
         };
-        localStorage.setItem('quran_planner_saved_plan', JSON.stringify(savedPlanData));
+        localStorage.setItem(CONSTANTS.STORAGE_KEYS.PLAN, JSON.stringify(savedPlanData));
       } catch (err) {
         console.warn('Unable to save plan to localStorage:', err);
       }
@@ -1330,7 +1339,7 @@
 
     function clearPlan() {
       try {
-        localStorage.removeItem('quran_planner_saved_plan');
+        localStorage.removeItem(CONSTANTS.STORAGE_KEYS.PLAN);
       } catch (err) {
         console.warn('Unable to clear localStorage:', err);
       }
@@ -1367,7 +1376,7 @@
 
     function loadSavedPlan() {
       try {
-        const raw = localStorage.getItem('quran_planner_saved_plan');
+        const raw = localStorage.getItem(CONSTANTS.STORAGE_KEYS.PLAN);
         if (!raw) return;
         const saved = JSON.parse(raw);
         if (!saved || !saved.days || !saved.startDate) return;
@@ -1619,7 +1628,7 @@
 
     function setTheme(preference) {
       try {
-        localStorage.setItem('theme_preference', preference);
+        localStorage.setItem(CONSTANTS.STORAGE_KEYS.THEME, preference);
       } catch (_) { }
       applyTheme(preference);
     }
@@ -1630,14 +1639,14 @@
 
     // React dynamically when system appearance changes and 'system' is active
     mediaQuery.addEventListener('change', () => {
-      const currentPref = localStorage.getItem('theme_preference') || 'system';
+      const currentPref = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME) || 'system';
       if (currentPref === 'system') {
         applyTheme('system');
       }
     });
 
     // Initialize theme UI state (defaults to 'system')
-    const currentThemePref = localStorage.getItem('theme_preference') || 'system';
+    const currentThemePref = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME) || 'system';
     applyTheme(currentThemePref);
 
     // ── Tooltip handler for .daily-stat (tap on mobile or click on desktop) ──
