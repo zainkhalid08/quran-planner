@@ -95,6 +95,9 @@
       --card: rgb(255, 255, 255);
       --input-bg: #ffffff;
 
+      /* Layout & container */
+      --container-max-width: 640px;
+
       /* Shape & motion */
       --radius-sm: 9px;
       --radius-md: 10px;
@@ -177,7 +180,7 @@
       box-shadow: var(--shadow-card);
       padding: 28px;
       width: 100%;
-      max-width: 500px;
+      max-width: var(--container-max-width);
     }
 
     /* ── Form ── */
@@ -359,7 +362,7 @@
     #results {
       display: none;
       width: 100%;
-      max-width: 500px;
+      max-width: var(--container-max-width);
       margin-top: 24px;
       animation: fadeUp 0.3s ease both;
     }
@@ -456,6 +459,11 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--muted-icon);
+      align-items: center;
+    }
+
+    .plan-header .header-surah {
+      text-align: center;
     }
 
     .day-row {
@@ -502,6 +510,7 @@
 
     .surah-info {
       min-width: 0;
+      text-align: center;
     }
 
     .surah-name {
@@ -511,6 +520,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-align: center;
     }
 
     .surah-meta {
@@ -519,6 +529,7 @@
       margin-top: 2px;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
     }
 
@@ -627,7 +638,7 @@
     /* ── Top Bar & Theme Switcher ── */
     .top-bar {
       width: 100%;
-      max-width: 500px;
+      max-width: var(--container-max-width);
       display: flex;
       justify-content: flex-end;
       margin-bottom: 8px;
@@ -751,6 +762,7 @@
         font-size: 0.7rem;
         gap: 4px;
         flex-wrap: wrap;
+        justify-content: center;
       }
 
       .surah-arabic {
@@ -943,6 +955,7 @@
     <!-- Column headers -->
     <div class="plan-header">
       <span>Day</span>
+      <span class="header-surah">Surah</span>
       <span>Read till ayah</span>
     </div>
 
@@ -1447,8 +1460,8 @@
       card.style.position = 'fixed';
       card.style.top = '-9999px';
       card.style.left = '-9999px';
-      card.style.width = '520px';
-      card.style.maxWidth = '520px';
+      card.style.width = '640px';
+      card.style.maxWidth = '640px';
       card.style.animation = 'none';
       card.style.transform = 'none';
 
