@@ -48,11 +48,26 @@
   }
   </script>
 
-  <!-- Theme Initialization (Defaults to system, no FOUC) -->
+  <!-- Global Constants & Theme Initialization (Runs synchronously before render to prevent FOUC) -->
   <script>
+    /* ── Configuration ── */
+    const CONFIG = {
+      showDailyAyahsCount: false
+    };
+
+    /* ── Constants ── */
+    const CONSTANTS = {
+      TOTAL_AYAHS: 6236,
+      TOTAL_SURAHS: 114,
+      STORAGE_KEYS: {
+        PLAN: 'quran_planner_saved_plan',
+        THEME: 'quran_planner_theme_preference'
+      }
+    };
+
     (function () {
       try {
-        const stored = localStorage.getItem('theme_preference') || 'system';
+        const stored = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME) || 'system';
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (stored === 'dark' || (stored === 'system' && prefersDark)) {
           document.documentElement.classList.add('dark');
@@ -1163,22 +1178,6 @@
       { number: 114, name: "An-Nas", arabic: "الناس", ayahs: 6 }
     ];
 
-    /* ── Constants ── */
-    const CONSTANTS = {
-      TOTAL_AYAHS: 6236,
-      TOTAL_SURAHS: 114,
-      STORAGE_KEYS: {
-        PLAN: 'quran_planner_saved_plan',
-        THEME: 'theme_preference'
-      }
-    };
-    const TOTAL = CONSTANTS.TOTAL_AYAHS;
-
-    /* ── Configuration ── */
-    const CONFIG = {
-      showDailyAyahsCount: false
-    };
-
     // Populate surah dropdown
     (function () {
       const sel = document.getElementById('startSurah');
@@ -1215,7 +1214,7 @@
       const startAyah = Math.max(1, Math.min(rawAyah, SURAHS[startSurahIdx].ayahs));
 
       const alreadyRead = ayahsBefore(startSurahIdx, startAyah - 1);
-      const remaining = TOTAL - alreadyRead;
+      const remaining = CONSTANTS.TOTAL_AYAHS - alreadyRead;
 
       if (remaining <= 0) {
         alert("You've already completed the Quran from that position!");
