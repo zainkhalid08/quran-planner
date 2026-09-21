@@ -540,6 +540,15 @@
       direction: rtl;
     }
 
+    .ayah-target {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-self: end;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
     .ayah-badge {
       font-size: 0.78rem;
       font-weight: 600;
@@ -551,7 +560,56 @@
       flex-shrink: 0;
     }
 
-    .day-row.today .ayah-badge {
+    .daily-stat {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 4px 7px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      cursor: pointer;
+      line-height: 1.2;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .daily-stat-tooltip {
+      position: fixed;
+      z-index: 9999;
+      background: var(--text);
+      color: var(--card);
+      font-size: 0.74rem;
+      font-weight: 500;
+      padding: 5px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateX(-50%);
+      animation: tooltipFade 0.15s ease-out;
+    }
+
+    @keyframes tooltipFade {
+      from {
+        opacity: 0;
+        transform: translate(-50%, 4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    .day-row.today .ayah-badge,
+    .day-row.today .daily-stat {
       background: var(--card);
     }
 
@@ -769,9 +827,19 @@
         font-size: 0.78rem;
       }
 
+      .ayah-target {
+        gap: 4px;
+      }
+
       .ayah-badge {
         font-size: 0.72rem;
         padding: 4px 7px;
+      }
+
+      .daily-stat {
+        min-width: 20px;
+        font-size: 0.72rem;
+        padding: 4px 5px;
       }
 
       .results-actions {
@@ -825,9 +893,19 @@
         font-size: 0.66rem;
       }
 
+      .ayah-target {
+        gap: 3px;
+      }
+
       .ayah-badge {
         font-size: 0.68rem;
         padding: 3px 6px;
+      }
+
+      .daily-stat {
+        min-width: 18px;
+        font-size: 0.66rem;
+        padding: 3px 4px;
       }
     }
   </style>
@@ -1085,6 +1163,11 @@
       { number: 114, name: "An-Nas", arabic: "الناس", verses: 6 }
     ];
 
+    /* ── Configuration ── */
+    const CONFIG = {
+      showDailyAyahsCount: false
+    };
+
     const TOTAL = 6236;
 
     // Populate surah dropdown
@@ -1168,6 +1251,7 @@
       for (let day = 1; day <= days; day++) {
         const target = Math.round((remaining / days) * day);
         let toRead = target - totalRead;
+        const dayAyahsCount = toRead;
         totalRead = target;
 
         while (surahIdx < SURAHS.length && toRead > 0) {
@@ -1215,7 +1299,10 @@
           <span class="surah-arabic">${SURAHS[dSurah].arabic}</span>
         </div>
       </div>
-      <span class="ayah-badge">Read till ayah ${dAyah}</span>
+      <div class="ayah-target">
+        <span class="ayah-badge">Read till ayah ${dAyah}</span>
+        ${CONFIG.showDailyAyahsCount ? `<span class="daily-stat" title="Ayahs to read">${dayAyahsCount}</span>` : ''}
+      </div>
     `;
         rows.appendChild(row);
       }
@@ -1552,6 +1639,77 @@
     // Initialize theme UI state (defaults to 'system')
     const currentThemePref = localStorage.getItem('theme_preference') || 'system';
     applyTheme(currentThemePref);
+
+    // ── Tooltip handler for .daily-stat (tap on mobile or click on desktop) ──
+    (function () {
+      let activeTooltip = null;
+      let hideTimeout = null;
+
+      function removeTooltip() {
+        if (activeTooltip) {
+          activeTooltip.remove();
+          activeTooltip = null;
+        }
+        if (hideTimeout) {
+          clearTimeout(hideTimeout);
+          hideTimeout = null;
+        }
+      }
+
+      function showStatTooltip(target) {
+        const text = target.getAttribute('data-title') || target.getAttribute('title');
+        if (!text) return;
+
+        // Preserve title in data-title so native title doesn't fight our tap tooltip
+        if (!target.getAttribute('data-title')) {
+          target.setAttribute('data-title', text);
+        }
+
+        removeTooltip();
+
+        const tip = document.createElement('div');
+        tip.className = 'daily-stat-tooltip';
+        tip.textContent = text;
+        tip.style.visibility = 'hidden';
+        document.body.appendChild(tip);
+        activeTooltip = tip;
+
+        const rect = target.getBoundingClientRect();
+        const tipWidth = tip.offsetWidth;
+        const tipHeight = tip.offsetHeight;
+
+        let top = rect.top - tipHeight - 6;
+        let left = rect.left + rect.width / 2;
+
+        // If clipped at the top, show below the pill
+        if (top < 8) {
+          top = rect.bottom + 6;
+        }
+
+        // Keep within viewport horizontally (since transform centers by -50%)
+        const minLeft = (tipWidth / 2) + 8;
+        const maxLeft = window.innerWidth - (tipWidth / 2) - 8;
+        left = Math.max(minLeft, Math.min(maxLeft, left));
+
+        tip.style.top = `${Math.round(top)}px`;
+        tip.style.left = `${Math.round(left)}px`;
+        tip.style.visibility = '';
+
+        hideTimeout = setTimeout(removeTooltip, 2200);
+      }
+
+      document.addEventListener('click', function (e) {
+        const stat = e.target.closest('.daily-stat');
+        if (stat) {
+          e.stopPropagation();
+          showStatTooltip(stat);
+        } else {
+          removeTooltip();
+        }
+      });
+
+      window.addEventListener('scroll', removeTooltip, { passive: true });
+    })();
 
     // Restore any previously generated plan upon page visit
     loadSavedPlan();
