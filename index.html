@@ -48,83 +48,18 @@
   }
   </script>
 
-  <!-- Global Constants & Theme Initialization (Runs synchronously before render to prevent FOUC) -->
+  <!-- Global Configuration, Storage & Theme Initialization (Runs synchronously before render to prevent FOUC) -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/storage.js"></script>
   <script>
-    /* ── Configuration ── */
-    const CONFIG = {
-      showDailyAyahsCount: false
-    };
-
     /* ── Constants ── */
     const CONSTANTS = {
       TOTAL_AYAHS: 6236,
-      TOTAL_SURAHS: 114,
-      STORAGE_KEYS: {
-        PLAN: 'quran_planner_saved_plan',
-        THEME: 'quran_planner_theme_preference'
-      }
-    };
-
-    /* ── Storage Helper ── */
-    const Storage = {
-      /**
-       * Retrieves a string value from localStorage safely.
-       * @param {string} key - Storage key name.
-       * @param {string|null} [fallback=null] - Value to return if key doesn't exist or access fails.
-       * @returns {string|null} The stored string or fallback.
-       */
-      getItem(key, fallback = null) {
-        try {
-          const val = localStorage.getItem(key);
-          return val !== null ? val : fallback;
-        } catch (_) {
-          return fallback;
-        }
-      },
-
-      /**
-       * Retrieves and parses a JSON object from localStorage safely.
-       * @param {string} key - Storage key name.
-       * @param {*} [fallback=null] - Value to return if parsing fails or key is missing.
-       * @returns {*} The parsed JSON data or fallback.
-       */
-      getJSON(key, fallback = null) {
-        try {
-          const val = localStorage.getItem(key);
-          return val ? JSON.parse(val) : fallback;
-        } catch (_) {
-          return fallback;
-        }
-      },
-
-      /**
-       * Saves a value (string or object) to localStorage safely.
-       * @param {string} key - Storage key name.
-       * @param {*} val - Value to store (automatically stringified if object/array).
-       */
-      setItem(key, val) {
-        try {
-          localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val));
-        } catch (err) {
-          console.warn('Storage set failed:', err);
-        }
-      },
-
-      /**
-       * Deletes an item from localStorage safely.
-       * @param {string} key - Storage key name to remove.
-       */
-      removeItem(key) {
-        try {
-          localStorage.removeItem(key);
-        } catch (err) {
-          console.warn('Storage remove failed:', err);
-        }
-      }
+      TOTAL_SURAHS: 114
     };
 
     (function () {
-      const stored = Storage.getItem(CONSTANTS.STORAGE_KEYS.THEME, 'system');
+      const stored = Storage.getItem(Storage.KEYS.THEME, 'system');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       if (stored === 'dark' || (stored === 'system' && prefersDark)) {
         document.documentElement.classList.add('dark');
@@ -1327,7 +1262,7 @@
         startAyah,
         startDate: planStartDate.toISOString()
       };
-      Storage.setItem(CONSTANTS.STORAGE_KEYS.PLAN, savedPlanData);
+      Storage.setItem(Storage.KEYS.PLAN, savedPlanData);
 
       DOM.statDays.textContent = days;
       DOM.statRemaining.textContent = remaining.toLocaleString();
@@ -1425,7 +1360,7 @@
      * and resets inputs back to their initial default state.
      */
     function clearPlan() {
-      Storage.removeItem(CONSTANTS.STORAGE_KEYS.PLAN);
+      Storage.removeItem(Storage.KEYS.PLAN);
 
       // Reset days input and all pill selections
       if (DOM.days) DOM.days.value = '';
@@ -1453,7 +1388,7 @@
      * Restores previously generated plan and form fields from localStorage on page visit.
      */
     function loadSavedPlan() {
-      const saved = Storage.getJSON(CONSTANTS.STORAGE_KEYS.PLAN);
+      const saved = Storage.getJSON(Storage.KEYS.PLAN);
       if (!saved || !saved.days || !saved.startDate) return;
 
       // Restore form inputs
@@ -1712,7 +1647,7 @@
      * @param {'light'|'system'|'dark'} preference - Theme selected by the user.
      */
     function setTheme(preference) {
-      Storage.setItem(CONSTANTS.STORAGE_KEYS.THEME, preference);
+      Storage.setItem(Storage.KEYS.THEME, preference);
       applyTheme(preference);
     }
 
@@ -1722,14 +1657,14 @@
 
     // React dynamically when system appearance changes and 'system' is active
     mediaQuery.addEventListener('change', () => {
-      const currentPref = Storage.getItem(CONSTANTS.STORAGE_KEYS.THEME, 'system');
+      const currentPref = Storage.getItem(Storage.KEYS.THEME, 'system');
       if (currentPref === 'system') {
         applyTheme('system');
       }
     });
 
     // Initialize theme UI state (defaults to 'system')
-    const currentThemePref = Storage.getItem(CONSTANTS.STORAGE_KEYS.THEME, 'system');
+    const currentThemePref = Storage.getItem(Storage.KEYS.THEME, 'system');
     applyTheme(currentThemePref);
 
     // ── Tooltip handler for .daily-stat (tap on mobile or click on desktop) ──
