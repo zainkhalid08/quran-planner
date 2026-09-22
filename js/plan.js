@@ -34,6 +34,7 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
       <div class="ayah-target">
         <span class="ayah-badge">Read till ayah ${item.targetAyah}</span>
         ${CONFIG.showDailyAyahsCount ? `<span class="daily-stat" title="Ayahs to read">${item.dayAyahsCount}</span>` : ''}
+        ${CONFIG.showDailyWordsCount ? `<span class="daily-stat" title="Words to read">${item.dayWordsCount.toLocaleString()}</span>` : ''}
       </div>
     `;
     DOM.planRows.appendChild(row);
@@ -108,7 +109,7 @@ function generatePlan(customStartDate, skipScroll) {
 
   renderPlan({
     days,
-    remaining: planResult.remaining,
+    remaining: planResult.remainingAyahs ?? planResult.remaining,
     schedule: planResult.schedule,
     planStartDate
   });

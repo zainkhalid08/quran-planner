@@ -1,7 +1,8 @@
 /* ── Quran Constants & Surah Metadata ── */
 const CONSTANTS = {
   TOTAL_AYAHS: 6236,
-  TOTAL_SURAHS: 114
+  TOTAL_SURAHS: 114,
+  TOTAL_WORDS: 82823
 };
 
 const SURAHS = [
