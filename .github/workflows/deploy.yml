@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Append Cache-Busting Query Params
+        run: |
+          SHA="${{ github.sha }}"
+          SHORT_SHA="${SHA:0:7}"
+          echo "Cache-busting version: ${SHORT_SHA}"
+          node -e '
+            const fs = require("fs");
+            const sha = process.argv[1];
+            let html = fs.readFileSync("index.html", "utf8");
+            html = html.replace(/(<script\s+[^>]*src=["\x27])(js\/[^"\x27]+)(["\x27][^>]*>)/gi, (m, p, s, suf) => {
+              const cleanSrc = s.split("?")[0];
+              return `${p}${cleanSrc}?v=${sha}${suf}`;
+            });
+            fs.writeFileSync("index.html", html, "utf8");
+            console.log("Successfully appended ?v=" + sha + " to all local scripts in index.html");
+          ' "${SHORT_SHA}"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
