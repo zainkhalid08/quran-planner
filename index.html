@@ -646,6 +646,8 @@
 
     .results-actions .btn-download {
       margin-top: 0;
+      flex: 1;
+      min-width: 0;
     }
 
     .btn-secondary {
@@ -829,12 +831,27 @@
       }
 
       .results-actions {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
       }
 
       .results-actions .btn-download {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
+        padding: 10px 8px;
+        font-size: 0.82rem;
+        gap: 5px;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .results-actions .btn-download {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 8px 6px;
+        font-size: 0.75rem;
+        gap: 4px;
       }
     }
 
@@ -892,6 +909,16 @@
         min-width: 18px;
         font-size: 0.66rem;
         padding: 3px 4px;
+      }
+
+      .results-actions {
+        gap: 6px;
+      }
+
+      .results-actions .btn-download {
+        padding: 9px 6px;
+        font-size: 0.78rem;
+        gap: 4px;
       }
     }
   </style>
