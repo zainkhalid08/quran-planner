@@ -172,7 +172,7 @@ function snapToNearestRuku(targetAyah, minAllowed, maxAllowed) {
  * Each strategy implements `adjustDayEnd({ targetGlobalAyah, minAllowed, maxAllowed })`.
  */
 const DAY_ENDING_HANDLERS = {
-  EXACT: {
+  MATHEMATICAL: {
     adjustDayEnd({ targetGlobalAyah, minAllowed, maxAllowed }) {
       return Math.max(minAllowed, Math.min(maxAllowed, targetGlobalAyah));
     }
@@ -205,7 +205,7 @@ const CALCULATION_STRATEGIES = {
 /**
  * Unified calculation pipeline:
  * 1. Computes mathematical volume target based on readingVolumeCalculationMode.
- * 2. Applies dayEndingStrategy (e.g. NEAREST_RUKU or EXACT).
+ * 2. Applies dayEndingStrategy (e.g. NEAREST_RUKU or MATHEMATICAL).
  * 3. Enforces daily boundaries (minAllowed <= target <= maxAllowed).
  * 4. Calculates precise dayAyahsCount, dayWordsCount, dates, and Surah coordinates.
  *
@@ -232,7 +232,7 @@ function calculatePlan({
     : { BY_AYAH_COUNT: 'BY_AYAH_COUNT', BY_WORD_COUNT: 'BY_WORD_COUNT' };
   const dayStrategies = typeof DAY_ENDING_STRATEGIES !== 'undefined'
     ? DAY_ENDING_STRATEGIES
-    : { EXACT: 'EXACT', NEAREST_RUKU: 'NEAREST_RUKU' };
+    : { MATHEMATICAL: 'MATHEMATICAL', NEAREST_RUKU: 'NEAREST_RUKU' };
 
   const activeVolumeMode = volumeMode || currentConfig?.readingVolumeCalculationMode || modes.BY_WORD_COUNT;
   const activeEndingStrategy = endingStrategy || currentConfig?.dayEndingStrategy || dayStrategies.NEAREST_RUKU;
