@@ -257,6 +257,37 @@
       margin-top: 1px;
     }
 
+    .pill-note-text {
+      flex: 1;
+    }
+
+    .pill-note-close {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 2px;
+      margin: -2px -2px 0 4px;
+      transition: color var(--transition-fast);
+    }
+
+    .pill-note-close:hover {
+      color: var(--text);
+    }
+
+    .pill-note-close:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .pill-note-close svg {
+      margin-top: 0;
+    }
+
     .pill-date-wrap {
       position: relative;
       display: inline-block;

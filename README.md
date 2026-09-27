@@ -8,10 +8,11 @@ Generate a day-by-day reading plan to finish the Quran in a chosen number of day
 - [Quick Start](#quick-start)
 - [Tech Stack](#tech-stack)
 - [How the Planning Algorithm Works](#how-the-planning-algorithm-works)
-  - [1. Building a Cumulative Timeline](#1-building-a-cumulative-timeline)
+  - [1. Building Cumulative Timelines](#1-building-cumulative-timelines)
   - [2. Locating Your Starting Point](#2-locating-your-starting-point)
-  - [3. Splitting the Remaining Ayahs Across Days](#3-splitting-the-remaining-ayahs-across-days)
-  - [4. Mapping Each Day Back to a Surah & Ayah](#4-mapping-each-day-back-to-a-surah--ayah)
+  - [3. Reading Volume Balancing Modes](#3-reading-volume-balancing-modes)
+  - [4. Day Ending Strategies & Boundary Snapping](#4-day-ending-strategies--boundary-snapping)
+  - [5. Mapping Each Day Back to a Surah & Ayah](#5-mapping-each-day-back-to-a-surah--ayah)
 
 <p align="center">
   <a href="https://zainkhalid.org/quran-planner.html">
@@ -128,62 +129,34 @@ const alreadyRead = ayahsBefore(startSurahIdx, startAyah - 1);
 const remaining = CONSTANTS.TOTAL_AYAHS - alreadyRead; // 6,236 - 106 = 6,130
 ```
 
-### 3. Splitting the Remaining Ayahs Across Days
+### 3. Reading Volume Balancing Modes
 
-To avoid rounding drift — where naive division leaves you short or over at the end — each day's *cumulative* target is rounded independently:
+Reading load can be balanced using either:
+- **`BY_AYAH_COUNT`**: Distributes remaining ayahs evenly across days.
+- **`BY_WORD_COUNT`**: Balances reading effort based on word count per ayah, ensuring lighter days with long ayahs (like Al-Baqarah) and balanced reading lengths throughout.
 
-$$\text{Target after Day } D = \text{round}\left(\frac{\text{Remaining Ayahs}}{\text{Total Days}} \times D\right)$$
+To avoid rounding drift, the cumulative target for each day is calculated independently:
 
-```javascript
-for (let day = 1; day <= days; day++) {
-  const target = Math.round((remaining / days) * day); // cumulative target through this day
-  const dayAyahsCount = target - totalRead;             // just today's portion
-  totalRead = target;
-  // ...
-}
-```
+$$\text{Target after Day } D = \text{round}\left(\frac{\text{Remaining Units}}{\text{Total Days}} \times D\right)$$
 
-**Walkthrough** — 6,130 remaining ayahs over 30 days (≈204.33/day):
+### 4. Day Ending Strategies & Boundary Snapping
 
-| Day | `round(204.33 × D)` | Cumulative target | Read today | Global position |
-|---|---|---|---|---|
-| 1 | round(204.33) | 204 | 204 | 106 + 204 = **310** |
-| 2 | round(408.67) | 409 | 205 | 106 + 409 = **515** |
-| 3 | round(613.00) | 613 | 204 | 106 + 613 = **719** |
-| ... | ... | ... | ... | ... |
-| 30 | round(6130.00) | 6130 | 204 | 106 + 6130 = **6236** ✅ exact finish |
+Rather than ending abruptly in the middle of a passage, the planner supports scalable **Day Ending Strategies**:
+- **`MATHEMATICAL`**: Concludes the day at the exact mathematically calculated ayah.
+- **`NEAREST_RUKU`**: Finishes the day at the nearest Ruku ending boundary (556 rukus across the Quran).
 
-Daily counts hover between 204–205 rather than drifting — this is what the per-day rounding buys you over a flat `remaining / days`.
+#### Unified Daily Boundary Enforcement
+When snapping each intermediate day, strict safety invariants are guaranteed:
 
-### 4. Mapping Each Day Back to a Surah & Ayah
+$$\text{minAllowed} \le \text{target} \le \text{maxAllowed}$$
 
-Once a day's global position (`alreadyRead + target`) is known, a binary search over `CUMULATIVE_AYAHS` resolves it back to a Surah and Ayah in **O(log N)**:
+- **`minAllowed = currentAyahIndex + 1`**: Ensures the reader always advances forward by at least 1 ayah today (prevents 0-ayah days).
+- **`maxAllowed = TOTAL_AYAHS - (remainingDays - 1)`**: Guarantees that every subsequent day in the schedule still has at least 1 ayah to read (prevents starving later days).
+
+### 5. Mapping Each Day Back to a Surah & Ayah
+
+Once each day's global finish position is established, binary search converts the global index ($1 \dots 6236$) back to the corresponding Surah and relative Ayah in **O(log N)**:
 
 ```javascript
-function getSurahAndAyahFromGlobal(globalAyah) {
-  const target = Math.max(1, Math.min(globalAyah, CONSTANTS.TOTAL_AYAHS));
-  let low = 0, high = SURAHS.length - 1;
-  let surahIdx = 0;
-
-  while (low <= high) {
-    const mid = (low + high) >> 1;
-    if (CUMULATIVE_AYAHS[mid] < target) {
-      surahIdx = mid;   // candidate surah — keep searching higher
-      low = mid + 1;
-    } else {
-      high = mid - 1;   // search lower
-    }
-  }
-
-  return { surahIdx, ayah: target - CUMULATIVE_AYAHS[surahIdx] };
-}
-
-// Used per day as:
-const { surahIdx: dSurah, ayah: dAyah } = getSurahAndAyahFromGlobal(alreadyRead + target);
+const { surahIdx: dSurah, ayahInSurah: dAyah, surah } = getSurahAndAyahFromCumulative(targetGlobalAyah);
 ```
-
-**Example** — Day 1, global ayah 310:
-1. Binary search places `310` between `CUMULATIVE_AYAHS[2]` (293) and `CUMULATIVE_AYAHS[3]` (493).
-2. That resolves to `surahIdx = 2` → **Surah 3, Ali 'Imran**.
-3. Ayah offset: `310 - 293 = 17`.
-4. Result: **"Read to Surah Ali 'Imran (3), Ayah 17"** — 204 ayahs read on Day 1.

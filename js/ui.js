@@ -209,7 +209,13 @@ function initUIEvents() {
         <path d="M7.5 1.5C4.19 1.5 1.5 4.19 1.5 7.5C1.5 10.81 4.19 13.5 7.5 13.5C10.81 13.5 13.5 10.81 13.5 7.5C13.5 4.19 10.81 1.5 7.5 1.5Z" stroke="currentColor" stroke-width="1.3"/>
         <path d="M7.5 4.75V7.75L9.5 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
       </svg>
-      <span><strong>Plan completes 1 day before Ramadan</strong> <br> Ramdan starts around ${dateStr}, plan ends on ${finishDateStr}. Actual start depends on moon sighting and may shift by a day or more.</span>
+      <span class="pill-note-text"><strong>Plan completes 1 day before Ramadan</strong> <br> Ramadan starts around ${dateStr}, plan ends on ${finishDateStr}. Actual start depends on moon sighting and may shift by a day or more.</span>
+      <button type="button" class="pill-note-close" aria-label="Close notice" title="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <line x1="3" y1="3" x2="11" y2="11"/>
+          <line x1="11" y1="3" x2="3" y2="11"/>
+        </svg>
+      </button>
     `;
     DOM.ramadanNote.style.display = 'flex';
   });
@@ -237,9 +243,24 @@ function initUIEvents() {
           <path d="M7.5 1.5C4.19 1.5 1.5 4.19 1.5 7.5C1.5 10.81 4.19 13.5 7.5 13.5C10.81 13.5 13.5 10.81 13.5 7.5C13.5 4.19 10.81 1.5 7.5 1.5Z" stroke="currentColor" stroke-width="1.3"/>
           <path d="M7.5 4.75V7.75L9.5 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
         </svg>
-        <span><strong>Plan completes by 29th of Ramadan</strong> <br>That is around ${endDateStr}. Actual dates depend on moon sighting and may shift by a day or more.</span>
+        <span class="pill-note-text"><strong>Plan completes by 29th of Ramadan</strong> <br>That is around ${endDateStr}. Actual dates depend on moon sighting and may shift by a day or more.</span>
+        <button type="button" class="pill-note-close" aria-label="Close notice" title="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <line x1="3" y1="3" x2="11" y2="11"/>
+            <line x1="11" y1="3" x2="3" y2="11"/>
+          </svg>
+        </button>
       `;
       DOM.ramadanNote.style.display = 'flex';
+    });
+  }
+
+  // Dismiss Ramadan note on close button click
+  if (DOM.ramadanNote) {
+    DOM.ramadanNote.addEventListener('click', event => {
+      if (event.target.closest('.pill-note-close')) {
+        clearRamadanNote();
+      }
     });
   }
 
