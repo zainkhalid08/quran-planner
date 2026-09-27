@@ -1,0 +1,199 @@
+/* ==========================================================================
+   Mobile & Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 540px) {
+  body {
+    padding: 20px 12px 48px;
+  }
+
+  header {
+    margin-bottom: 24px;
+  }
+
+  header h1 {
+    font-size: 2.1rem;
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    font-size: 0.86rem;
+  }
+
+  .card {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .pill-row {
+    gap: 6px;
+  }
+
+  .pill {
+    padding: 6px 10px;
+    font-size: 0.74rem;
+  }
+
+  .stats {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .stat {
+    padding: 10px 6px;
+  }
+
+  .stat-val {
+    font-size: 1.15rem;
+  }
+
+  .stat-lbl {
+    font-size: 0.67rem;
+  }
+
+  .plan-header {
+    grid-template-columns: 86px 1fr auto;
+    padding: 0 10px 6px;
+    gap: 6px;
+    font-size: 0.68rem;
+  }
+
+  .day-row {
+    grid-template-columns: 86px 1fr auto;
+    padding: 10px 10px;
+    gap: 6px;
+  }
+
+  .day-num {
+    font-size: 0.78rem;
+  }
+
+  .day-date {
+    font-size: 0.68rem;
+  }
+
+  .today-pill {
+    font-size: 0.58rem;
+    padding: 1px 4px;
+  }
+
+  .surah-name {
+    font-size: 0.84rem;
+  }
+
+  .surah-meta {
+    font-size: 0.7rem;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .surah-arabic {
+    font-size: 0.78rem;
+  }
+
+  .ayah-target {
+    gap: 4px;
+  }
+
+  .ayah-badge {
+    font-size: 0.72rem;
+    padding: 4px 7px;
+  }
+
+  .daily-stat {
+    min-width: 20px;
+    font-size: 0.72rem;
+    padding: 4px 5px;
+  }
+
+  .results-actions {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .results-actions .btn-download {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 0.82rem;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 380px) {
+  body {
+    padding: 16px 8px 40px;
+  }
+
+  header h1 {
+    font-size: 1.85rem;
+  }
+
+  .card {
+    padding: 16px 12px;
+  }
+
+  .plan-header {
+    grid-template-columns: 76px 1fr auto;
+    gap: 4px;
+    padding: 0 8px 4px;
+  }
+
+  .day-row {
+    grid-template-columns: 76px 1fr auto;
+    padding: 8px 8px;
+    gap: 4px;
+  }
+
+  .day-num {
+    font-size: 0.74rem;
+  }
+
+  .day-date {
+    font-size: 0.64rem;
+  }
+
+  .surah-name {
+    font-size: 0.8rem;
+  }
+
+  .surah-meta {
+    font-size: 0.66rem;
+  }
+
+  .ayah-target {
+    gap: 3px;
+  }
+
+  .ayah-badge {
+    font-size: 0.68rem;
+    padding: 3px 6px;
+  }
+
+  .daily-stat {
+    min-width: 18px;
+    font-size: 0.66rem;
+    padding: 3px 4px;
+  }
+
+  .results-actions {
+    gap: 6px;
+  }
+
+  .results-actions .btn-download {
+    padding: 9px 6px;
+    font-size: 0.78rem;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 340px) {
+  .results-actions .btn-download {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px 6px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+}

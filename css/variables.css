@@ -1,0 +1,75 @@
+/* ==========================================================================
+   Design Tokens & Color Themes
+   ========================================================================== */
+
+:root {
+  /* Brand / Accent */
+  --accent: #171717;
+  --accent-strong: #000000;
+  --accent-bg: #f4f4f5;
+  --accent-soft: #f4f4f5;
+  --accent-border: #e4e4e7;
+  --on-accent: #ffffff;
+
+  /* Surfaces & Typography */
+  --text: #18181b;
+  --text-secondary: #52525b;
+  --muted: #71717a;
+  --muted-icon: #a1a1aa;
+  --border: #e4e4e7;
+  --border-subtle: #f4f4f5;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --input-bg: #ffffff;
+
+  /* Layout */
+  --container-max-width: 640px;
+
+  /* Radius & Curves */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Elevation & Shadows */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-switch: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --focus-ring: 0 0 0 3px rgba(24, 24, 27, 0.12);
+
+  color-scheme: light;
+}
+
+html.dark {
+  /* Brand / Accent */
+  --accent: #f4f4f5;
+  --accent-strong: #ffffff;
+  --accent-bg: rgba(255, 255, 255, 0.08);
+  --accent-soft: rgba(255, 255, 255, 0.06);
+  --accent-border: rgba(255, 255, 255, 0.14);
+  --on-accent: #09090b;
+
+  /* Surfaces & Typography */
+  --text: #fafafa;
+  --text-secondary: #a1a1aa;
+  --muted: #a1a1aa;
+  --muted-icon: #71717a;
+  --border: #27272a;
+  --border-subtle: #18181b;
+  --bg: #09090b;
+  --card: #121215;
+  --input-bg: #18181b;
+
+  /* Elevation & Shadows */
+  --shadow-card: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-switch: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.18);
+
+  color-scheme: dark;
+}

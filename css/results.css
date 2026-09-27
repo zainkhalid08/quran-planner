@@ -1,0 +1,272 @@
+/* ==========================================================================
+   Results Container, Statistics & Day-by-Day Table
+   ========================================================================== */
+
+/* ── Results Container ── */
+#results {
+  display: none;
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-top: 24px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.results-header {
+  display: none;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+#resultsExportClone .results-header {
+  display: block;
+}
+
+.results-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.results-subtitle {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.results-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 0.74rem;
+  color: var(--muted);
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+
+/* ── Plan Summary Stats ── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.stat {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: var(--shadow-subtle);
+  transition: transform var(--transition-fast);
+}
+
+.stat:hover {
+  transform: translateY(-1px);
+}
+
+.stat-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-lbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── Plan Day-by-Day Table ── */
+.plan-header {
+  display: grid;
+  grid-template-columns: 111px 1fr auto;
+  gap: 8px;
+  padding: 0 14px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-icon);
+  align-items: center;
+}
+
+.day-row {
+  display: grid;
+  grid-template-columns: 111px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.day-row:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.day-row.today {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.day-info {
+  line-height: 1.1;
+}
+
+.day-num {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.day-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.today-pill {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.surah-info {
+  min-width: 0;
+}
+
+.surah-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.surah-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.surah-arabic {
+  font-family: 'Amiri', 'Arial', serif;
+  font-size: 0.88rem;
+  color: var(--muted-icon);
+  direction: rtl;
+}
+
+.ayah-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.ayah-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: var(--radius-xs);
+  padding: 4px 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.daily-stat {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: var(--radius-xs);
+  padding: 4px 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  line-height: 1.2;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+.daily-stat:active {
+  transform: scale(0.95);
+}
+
+.day-row.today .ayah-badge,
+.day-row.today .daily-stat {
+  background: var(--card);
+}
+
+/* ── Daily Stat Tooltip ── */
+.daily-stat-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: var(--text);
+  color: var(--card);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transform: translateX(-50%);
+  animation: tooltipFade 0.15s ease-out;
+}
+
+/* ── Keyframe Animations ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
