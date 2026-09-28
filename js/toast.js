@@ -27,7 +27,20 @@
     if (!message) return;
 
     let container = document.getElementById('toastContainer');
-    if (!container) {
+    if (container) {
+      const existingMessages = container.querySelectorAll('.toast-message');
+      for (let i = 0; i < existingMessages.length; i++) {
+        if (existingMessages[i].textContent === message) {
+          const existingToast = existingMessages[i].closest('.toast');
+          if (existingToast) {
+            existingToast.classList.remove('toast-vibrate');
+            void existingToast.offsetWidth; // trigger reflow
+            existingToast.classList.add('toast-vibrate');
+          }
+          return;
+        }
+      }
+    } else {
       container = document.createElement('div');
       container.id = 'toastContainer';
       container.className = 'toast-container';
