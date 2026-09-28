@@ -67,7 +67,7 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
 function generatePlan(customStartDate, skipScroll) {
   const days = parseInt(DOM.days.value);
   if (!days || days < 1) {
-    alert('Please enter a valid number of days.');
+    showToast('Please enter a valid number of days.', 'warning');
     return;
   }
 
@@ -79,12 +79,12 @@ function generatePlan(customStartDate, skipScroll) {
   const remaining = CONSTANTS.TOTAL_AYAHS - alreadyRead;
 
   if (remaining <= 0) {
-    alert("You've already completed the Quran from that position!");
+    showToast("You've already completed the Quran from that position!", 'info');
     return;
   }
 
   if (days > remaining) {
-    alert(`You only have ${remaining.toLocaleString()} ayahs left. Please enter ${remaining.toLocaleString()} days or fewer.`);
+    showToast(`You only have ${remaining.toLocaleString()} ayahs left. Please enter ${remaining.toLocaleString()} days or fewer.`, 'warning');
     return;
   }
 

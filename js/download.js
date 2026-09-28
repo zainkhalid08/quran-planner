@@ -58,7 +58,7 @@ async function downloadPlan() {
     setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
   } catch (err) {
     console.error('Download failed:', err);
-    alert('Could not generate image. Please try again.');
+    showToast('Could not generate image. Please try again.', 'error');
   } finally {
     if (cardClone.parentNode) {
       document.body.removeChild(cardClone);

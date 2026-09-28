@@ -176,7 +176,7 @@ function initUIEvents() {
   DOM.ramadanPill.addEventListener('click', () => {
     const ramadanStart = getNextRamadanStart();
     if (!ramadanStart) {
-      alert("Couldn't calculate Ramadan's start date on this device/browser.");
+      showToast("Couldn't calculate Ramadan's start date on this device/browser.", 'error');
       return;
     }
 
@@ -225,7 +225,7 @@ function initUIEvents() {
     DOM.endRamadanPill.addEventListener('click', () => {
       const planInfo = getEndRamadanPlan();
       if (!planInfo) {
-        alert("Couldn't calculate Ramadan's end date on this device/browser.");
+        showToast("Couldn't calculate Ramadan's end date on this device/browser.", 'error');
         return;
       }
 
@@ -297,7 +297,7 @@ function initUIEvents() {
     const daysUntil = Math.round((pickedDate - today) / (1000 * 60 * 60 * 24));
 
     if (daysUntil < 1) {
-      alert('Please pick a date in the future.');
+      showToast('Please pick a date in the future.', 'warning');
       return;
     }
 
