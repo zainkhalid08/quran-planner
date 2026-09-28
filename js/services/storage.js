@@ -1,4 +1,4 @@
-/* ── Storage Helper ── */
+/* ── Storage Service ── */
 const Storage = {
   KEYS: {
     PLAN: 'quran_planner_saved_plan',
@@ -64,3 +64,14 @@ const Storage = {
     }
   }
 };
+
+const storageService = Storage;
+
+if (typeof window !== 'undefined') {
+  window.Storage = Storage;
+  window.storageService = storageService;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { Storage, storageService };
+}

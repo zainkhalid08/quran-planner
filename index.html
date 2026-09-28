@@ -48,7 +48,7 @@
 
   <!-- Global Configuration, Storage & Theme Initialization (Runs synchronously before render to prevent FOUC) -->
   <script src="js/config.js"></script>
-  <script src="js/storage.js"></script>
+  <script src="js/services/storage.js"></script>
   <script src="js/theme.js"></script>
   <script>
     // Immediate anti-FOUC theme class application before DOM renders
@@ -203,7 +203,8 @@
   <script src="js/algo.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/plan.js"></script>
-  <script src="js/download.js"></script>
+  <script src="js/services/plan.js"></script>
+  <script src="js/services/export.js"></script>
   <script>
     // Initialize UI events and restore any previously saved plan
     initUIEvents();
