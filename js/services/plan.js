@@ -15,14 +15,26 @@ function generatePlan(customStartDate, skipScroll) {
   const days = parseInt(daysInput.value);
   if (!days || days < 1) {
     if (typeof showToast === 'function') {
-      showToast('Please enter a valid number of days.', 'warning');
+      showToast('Please enter valid number of days.', 'warning');
     }
     return;
   }
 
   const startSurahIdx = parseInt(startSurahSelect.value);
-  const rawAyah = parseInt(startAyahInput.value) || 1;
-  const startAyah = Math.max(1, Math.min(rawAyah, SURAHS[startSurahIdx].ayahs));
+
+  const maxAyahs = SURAHS[startSurahIdx].ayahs;
+
+  let startAyah = 1;
+  if (startAyahInput.value.trim() !== '') {
+    startAyah = parseInt(startAyahInput.value);
+    if (isNaN(startAyah) || startAyah < 1 || startAyah > maxAyahs) {
+      if (typeof showToast === 'function') {
+        const surahName = SURAHS[startSurahIdx].name;
+        showToast(`Please enter ayah number between 1 and ${maxAyahs} .`, 'warning');
+      }
+      return;
+    }
+  }
 
   const alreadyRead = ayahsBefore(startSurahIdx, startAyah - 1);
   const remaining = CONSTANTS.TOTAL_AYAHS - alreadyRead;
@@ -36,7 +48,7 @@ function generatePlan(customStartDate, skipScroll) {
 
   if (days > remaining) {
     if (typeof showToast === 'function') {
-      showToast(`You only have ${remaining.toLocaleString()} ayahs left. Please enter ${remaining.toLocaleString()} days or fewer.`, 'warning');
+      showToast(`You have ${remaining.toLocaleString()} ayahs left. Please enter ${remaining.toLocaleString()} days or fewer.`, 'warning');
     }
     return;
   }

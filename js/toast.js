@@ -28,6 +28,16 @@
 
     let container = document.getElementById('toastContainer');
     if (container) {
+      // Dismiss any existing toasts to avoid stacking
+      const existingToasts = container.querySelectorAll('.toast');
+      existingToasts.forEach(t => {
+        if (!t.classList.contains('toast-hiding')) {
+          t.classList.add('toast-hiding');
+          t.addEventListener('animationend', () => t.remove(), { once: true });
+        }
+      });
+
+      // If the same message is already shown, vibrate it instead of creating a new toast
       const existingMessages = container.querySelectorAll('.toast-message');
       for (let i = 0; i < existingMessages.length; i++) {
         if (existingMessages[i].textContent === message) {
