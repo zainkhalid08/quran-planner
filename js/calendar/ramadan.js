@@ -101,13 +101,3 @@ function getEndRamadanPlan(from = new Date()) {
     isCurrentlyRamadan: false
   };
 }
-
-/**
- * Hides and clears the Ramadan informative note container.
- */
-function clearRamadanNote() {
-  if (DOM && DOM.ramadanNote) {
-    DOM.ramadanNote.style.display = 'none';
-    DOM.ramadanNote.innerHTML = '';
-  }
-}

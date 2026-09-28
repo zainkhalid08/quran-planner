@@ -51,7 +51,7 @@
   <!-- Global Configuration, Storage & Theme Initialization (Runs synchronously before render to prevent FOUC) -->
   <script src="js/config.js"></script>
   <script src="js/services/storage.js"></script>
-  <script src="js/theme.js"></script>
+  <script src="js/ui/theme.js"></script>
   <script>
     // Immediate anti-FOUC theme class application before DOM renders
     applyTheme(Storage.getItem(Storage.KEYS.THEME, 'system'));
@@ -199,13 +199,24 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="js/toast.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/ramadan.js"></script>
-  <script src="js/algo.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/plan.js"></script>
-  <script src="js/services/plan.js"></script>
+
+  <!-- Data & Core -->
+  <script src="js/data/surahs.js"></script>
+  <script src="js/core/lookup-tables.js"></script>
+  <script src="js/core/algo.js"></script>
+
+  <!-- Calendar -->
+  <script src="js/calendar/ramadan.js"></script>
+
+  <!-- UI Layer -->
+  <script src="js/ui/dom.js"></script>
+  <script src="js/ui/toast.js"></script>
+  <script src="js/ui/tooltips.js"></script>
+  <script src="js/ui/plan-renderer.js"></script>
+  <script src="js/ui/events.js"></script>
+
+  <!-- Services -->
+  <script src="js/services/plan-service.js"></script>
   <script src="js/services/export.js"></script>
   <script>
     // Initialize UI events and restore any previously saved plan
