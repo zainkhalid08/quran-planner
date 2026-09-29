@@ -4,6 +4,30 @@
  */
 
 /**
+ * Cached formatters to prevent repeated synchronous Intl instantiation.
+ */
+let cachedNumberFormatter = null;
+let cachedResultsDateFormatter = null;
+
+function getNumberFormatter() {
+  if (!cachedNumberFormatter) {
+    cachedNumberFormatter = new Intl.NumberFormat('en-US');
+  }
+  return cachedNumberFormatter;
+}
+
+function getResultsDateFormatter() {
+  if (!cachedResultsDateFormatter) {
+    cachedResultsDateFormatter = new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+  return cachedResultsDateFormatter;
+}
+
+/**
  * Renders the day-by-day plan rows and summary statistics in the DOM.
  *
  * @param {Object} planData
@@ -13,15 +37,21 @@
  * @param {Date} planData.planStartDate - Plan start date.
  */
 function renderPlan({ days, remaining, schedule, planStartDate }) {
+  const numberFormatter = getNumberFormatter();
+
   DOM.statDays.textContent = days;
-  DOM.statRemaining.textContent = remaining.toLocaleString();
-  DOM.statAvg.textContent = Math.round(remaining / days).toLocaleString();
+  DOM.statRemaining.textContent = numberFormatter.format(remaining);
+  DOM.statAvg.textContent = numberFormatter.format(Math.round(remaining / days));
 
-  DOM.planRows.innerHTML = '';
+  // Batch DOM row insertions using a DocumentFragment to eliminate per-row layout reflows
+  const fragment = document.createDocumentFragment();
 
-  schedule.forEach(item => {
+  for (let i = 0; i < schedule.length; i++) {
+    const item = schedule[i];
     const row = document.createElement('div');
     row.className = 'day-row';
+
+    const wordsCountStr = item.dayWordsCount != null ? numberFormatter.format(item.dayWordsCount) : '';
 
     row.innerHTML = `
       <div class="day-info">
@@ -39,11 +69,19 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
       <div class="ayah-target">
         <span class="ayah-badge">Read till ayah ${item.targetAyah}</span>
         ${CONFIG.showDailyAyahsCount ? `<span class="daily-stat" title="Ayahs to read">${item.dayAyahsCount}</span>` : ''}
-        ${CONFIG.showDailyWordsCount ? `<span class="daily-stat" title="Words to read">${item.dayWordsCount.toLocaleString()}</span>` : ''}
+        ${CONFIG.showDailyWordsCount ? `<span class="daily-stat" title="Words to read">${wordsCountStr}</span>` : ''}
       </div>
     `;
-    DOM.planRows.appendChild(row);
-  });
+    fragment.appendChild(row);
+  }
+
+  // Single batched update to the live DOM
+  if (typeof DOM.planRows.replaceChildren === 'function') {
+    DOM.planRows.replaceChildren(fragment);
+  } else {
+    DOM.planRows.innerHTML = '';
+    DOM.planRows.appendChild(fragment);
+  }
 
   DOM.results.style.display = 'block';
   // Re-trigger animation on regenerate
@@ -54,11 +92,7 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
   if (DOM.resultsActions) DOM.resultsActions.style.display = 'flex';
 
   if (DOM.resultsFooter) {
-    const dateStr = planStartDate.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    const dateStr = getResultsDateFormatter().format(planStartDate);
     DOM.resultsFooter.textContent = `Generated on ${dateStr}`;
   }
 }

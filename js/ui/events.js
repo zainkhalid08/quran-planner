@@ -4,12 +4,14 @@
  * Populates the starting Surah dropdown list from the SURAHS array.
  */
 function populateSurahDropdown() {
+  const fragment = document.createDocumentFragment();
   SURAHS.forEach((surah, index) => {
     const option = document.createElement('option');
     option.value = index;
     option.textContent = `${surah.number}. ${surah.name}`;
-    DOM.startSurah.appendChild(option);
+    fragment.appendChild(option);
   });
+  DOM.startSurah.appendChild(fragment);
   updateAyahMax();
 }
 

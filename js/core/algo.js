@@ -153,6 +153,24 @@ const CALCULATION_STRATEGIES = {
   }
 };
 
+let cachedPlanDateFormatter = null;
+
+/**
+ * Reusable Intl.DateTimeFormat instance for plan dates to avoid instantiating in loops.
+ * @returns {Intl.DateTimeFormat}
+ */
+function getPlanDateFormatter() {
+  if (!cachedPlanDateFormatter) {
+    cachedPlanDateFormatter = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+  return cachedPlanDateFormatter;
+}
+
 /**
  * Unified calculation pipeline:
  * 1. Computes mathematical volume target based on readingVolumeCalculationMode.
@@ -201,6 +219,7 @@ function calculatePlan({
   const currentDayDate = new Date();
   currentDayDate.setHours(0, 0, 0, 0);
 
+  const dateFormatter = getPlanDateFormatter();
   const schedule = [];
   let currentAyahIndex = alreadyReadAyahs;
 
@@ -248,12 +267,7 @@ function calculatePlan({
 
     const currentDate = new Date(planStartDate);
     currentDate.setDate(planStartDate.getDate() + day - 1);
-    const dateStr = currentDate.toLocaleDateString('en-GB', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
+    const dateStr = dateFormatter.format(currentDate);
 
     const isCurrentDate = currentDate.getTime() === currentDayDate.getTime();
 
@@ -277,5 +291,31 @@ function calculatePlan({
     remainingWords,
     remaining: remainingAyahs,
     schedule
+  };
+}
+
+if (typeof window !== 'undefined') {
+  window.ayahsBefore = ayahsBefore;
+  window.wordsBefore = wordsBefore;
+  window.getSurahAndAyahFromCumulative = getSurahAndAyahFromCumulative;
+  window.findNearestAyahByWords = findNearestAyahByWords;
+  window.snapToNearestRuku = snapToNearestRuku;
+  window.getPlanDateFormatter = getPlanDateFormatter;
+  window.calculatePlan = calculatePlan;
+  window.DAY_ENDING_HANDLERS = DAY_ENDING_HANDLERS;
+  window.CALCULATION_STRATEGIES = CALCULATION_STRATEGIES;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    ayahsBefore,
+    wordsBefore,
+    getSurahAndAyahFromCumulative,
+    findNearestAyahByWords,
+    snapToNearestRuku,
+    getPlanDateFormatter,
+    calculatePlan,
+    DAY_ENDING_HANDLERS,
+    CALCULATION_STRATEGIES
   };
 }

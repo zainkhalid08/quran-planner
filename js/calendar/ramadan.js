@@ -1,21 +1,52 @@
 /**
+ * Cached Hijri DateTimeFormat instance to prevent synchronous instantiation in search loops.
+ */
+let cachedHijriFormatter = null;
+let isHijriFormatterSupported = true;
+
+/**
+ * Gets or creates the cached Hijri DateTimeFormat instance.
+ * @returns {Intl.DateTimeFormat|null}
+ */
+function getHijriFormatter() {
+  if (!isHijriFormatterSupported) return null;
+  if (!cachedHijriFormatter) {
+    try {
+      cachedHijriFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric'
+      });
+    } catch (e) {
+      isHijriFormatterSupported = false;
+      return null;
+    }
+  }
+  return cachedHijriFormatter;
+}
+
+/**
  * Extracts Hijri day, month, and year parts for a given date using the Umm al-Qura calendar.
  * @param {Date} [date=new Date()]
  * @returns {{ day: number, month: number, year: number }|null}
  */
 function getHijriDateParts(date = new Date()) {
+  const hijriFormatter = getHijriFormatter();
+  if (!hijriFormatter) return null;
+
   try {
-    const hijriFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric'
-    });
     const parts = hijriFormatter.formatToParts(date);
-    return {
-      day: parseInt(parts.find(part => part.type === 'day').value, 10),
-      month: parseInt(parts.find(part => part.type === 'month').value, 10),
-      year: parseInt(parts.find(part => part.type === 'year').value, 10)
-    };
+    let day = 0;
+    let month = 0;
+    let year = 0;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part.type === 'day') day = parseInt(part.value, 10);
+      else if (part.type === 'month') month = parseInt(part.value, 10);
+      else if (part.type === 'year') year = parseInt(part.value, 10);
+    }
+    if (!day || !month || !year) return null;
+    return { day, month, year };
   } catch (e) {
     return null;
   }
@@ -99,5 +130,21 @@ function getEndRamadanPlan(from = new Date()) {
     ramadanStart,
     ramadanEnd: endDate,
     isCurrentlyRamadan: false
+  };
+}
+
+if (typeof window !== 'undefined') {
+  window.getHijriFormatter = getHijriFormatter;
+  window.getHijriDateParts = getHijriDateParts;
+  window.getNextRamadanStart = getNextRamadanStart;
+  window.getEndRamadanPlan = getEndRamadanPlan;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    getHijriFormatter,
+    getHijriDateParts,
+    getNextRamadanStart,
+    getEndRamadanPlan
   };
 }
