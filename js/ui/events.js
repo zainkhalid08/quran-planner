@@ -226,8 +226,60 @@ function initUIEvents() {
     clearRamadanNote();
   });
 
+  // Starting Surah change listener
+  if (DOM.startSurah) {
+    DOM.startSurah.addEventListener('change', updateAyahMax);
+  }
+
+  // Generate plan action button
+  if (DOM.generatePlanBtn) {
+    DOM.generatePlanBtn.addEventListener('click', () => {
+      if (typeof generatePlan === 'function') generatePlan();
+    });
+  }
+
+  // Download plan button
+  if (DOM.downloadBtn) {
+    DOM.downloadBtn.addEventListener('click', () => {
+      if (typeof downloadPlan === 'function') downloadPlan();
+    });
+  }
+
+  // Reset / Clear plan button
+  if (DOM.clearPlanBtn) {
+    DOM.clearPlanBtn.addEventListener('click', () => {
+      if (typeof clearPlan === 'function') clearPlan();
+    });
+  }
+
   // Enter key support to trigger plan generation
-  DOM.days.addEventListener('keydown', event => {
-    if (event.key === 'Enter') generatePlan();
-  });
+  if (DOM.days) {
+    DOM.days.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && typeof generatePlan === 'function') generatePlan();
+    });
+  }
+
+  if (DOM.startAyah) {
+    DOM.startAyah.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && typeof generatePlan === 'function') generatePlan();
+    });
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.populateSurahDropdown = populateSurahDropdown;
+  window.updateAyahMax = updateAyahMax;
+  window.initDateBounds = initDateBounds;
+  window.clearRamadanNote = clearRamadanNote;
+  window.initUIEvents = initUIEvents;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    populateSurahDropdown,
+    updateAyahMax,
+    initDateBounds,
+    clearRamadanNote,
+    initUIEvents
+  };
 }

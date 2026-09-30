@@ -134,24 +134,24 @@
         <span class="field-hint" id="startHint">leave blank to start from the beginning</span>
       </div>
       <div class="input-row">
-        <select id="startSurah" onchange="updateAyahMax()" aria-labelledby="startSurahLabel" aria-describedby="startHint"></select>
+        <select id="startSurah" aria-labelledby="startSurahLabel" aria-describedby="startHint"></select>
         <label for="startAyah" class="sr-only">Starting Ayah</label>
         <input type="number" id="startAyah" min="1" placeholder="Ayah" aria-label="Starting Ayah" />
       </div>
     </div>
 
-    <button class="btn" onclick="generatePlan()">Generate my plan →</button>
+    <button class="btn" id="generatePlanBtn">Generate my plan →</button>
 
     <!-- Actions -->
     <div class="results-actions" id="resultsActions" style="display: none;">
-      <button class="btn-download" id="downloadBtn" onclick="downloadPlan()">
+      <button class="btn-download" id="downloadBtn">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M7.5 10.5L3.5 6.5H6V1.5H9V6.5H11.5L7.5 10.5Z" fill="currentColor" />
           <path d="M2 12.5H13V13.5H2V12.5Z" fill="currentColor" />
         </svg>
         Download Image
       </button>
-      <button class="btn-download" id="clearPlanBtn" onclick="clearPlan()" title="Clear this plan and create a new one" aria-label="Reset plan and clear inputs">
+      <button class="btn-download" id="clearPlanBtn" title="Clear this plan and create a new one" aria-label="Reset plan and clear inputs">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path
             d="M1.5 7.5C1.5 4.18629 4.18629 1.5 7.5 1.5C10.1255 1.5 12.3486 3.18635 13.1517 5.5M13.5 7.5C13.5 10.8137 10.8137 13.5 7.5 13.5C4.87449 13.5 2.6514 11.8137 1.8483 9.5M13.5 2V5.5H10M1.5 13V9.5H5"

@@ -16,5 +16,15 @@ const DOM = {
   endRamadanPill: document.getElementById('endRamadanPill'),
   ramadanNote: document.getElementById('ramadanNote'),
   downloadBtn: document.getElementById('downloadBtn'),
+  clearPlanBtn: document.getElementById('clearPlanBtn'),
+  generatePlanBtn: document.getElementById('generatePlanBtn'),
   card: document.querySelector('.card')
 };
+
+if (typeof window !== 'undefined') {
+  window.DOM = DOM;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { DOM };
+}
