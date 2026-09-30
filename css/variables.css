@@ -14,8 +14,8 @@
   /* Surfaces & Typography */
   --text: #18181b;
   --text-secondary: #52525b;
-  --muted: #71717a;
-  --muted-icon: #a1a1aa;
+  --muted: #5e5e66;
+  --muted-icon: #767680;
   --border: #e4e4e7;
   --border-subtle: #f4f4f5;
   --bg: #f8fafc;
@@ -58,7 +58,7 @@ html.dark {
   --text: #fafafa;
   --text-secondary: #a1a1aa;
   --muted: #a1a1aa;
-  --muted-icon: #71717a;
+  --muted-icon: #8e8e96;
   --border: #27272a;
   --border-subtle: #18181b;
   --bg: #09090b;
