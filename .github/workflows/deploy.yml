@@ -38,17 +38,6 @@ jobs:
               return crypto.createHash("md5").update(content).digest("hex").slice(0, 8);
             }
 
-            // 1. Cache-bust individual @import rules inside css/styles.css first
-            if (fs.existsSync("css/styles.css")) {
-              let styles = fs.readFileSync("css/styles.css", "utf8");
-              styles = styles.replace(/(@import\s+["\x27])([^"\x27?]+)(\.css)(["\x27];)/gi, (m, p, file, ext, suf) => {
-                const targetPath = path.join("css", `${file}${ext}`);
-                const hash = getFileHash(targetPath);
-                return hash ? `${p}${file}${ext}?v=${hash}${suf}` : m;
-              });
-              fs.writeFileSync("css/styles.css", styles, "utf8");
-              console.log("Appended content-based hash to @imports in css/styles.css");
-            }
 
             // 2. Cache-bust scripts in index.html based on individual file content
             let html = fs.readFileSync("index.html", "utf8");

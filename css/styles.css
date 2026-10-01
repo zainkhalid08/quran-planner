@@ -1,12 +1,1151 @@
 /* ==========================================================================
-   Quran Planner — Master Stylesheet
-   Imports modular stylesheets in order: tokens -> base -> components -> media
+   Quran Planner — Unified Stylesheet
+   Consolidated production stylesheet containing all design tokens, base styles,
+   component styles, toasts, and responsive media queries.
+
+   TABLE OF CONTENTS:
+   1. Design Tokens & Theme Variables (Light & Dark)
+   2. Base Reset, Typography & App Layout
+   3. Form Card, Input Controls & Selection Pills
+   4. Action Buttons & Interactive Controls
+   5. Results Card, Summary Statistics & Schedule Table
+   6. Toast Notifications & Animated Alerts
+   7. Responsive Breakpoints & Mobile Adaptations
    ========================================================================== */
 
-@import "variables.css";
-@import "base.css";
-@import "form.css";
-@import "buttons.css";
-@import "results.css";
-@import "toast.css";
-@import "responsive.css";
+/* ==========================================================================
+   1. DESIGN TOKENS & THEME VARIABLES
+   ========================================================================== */
+
+:root {
+  /* Brand / Accent */
+  --accent: #171717;
+  --accent-strong: #000000;
+  --accent-bg: #f4f4f5;
+  --accent-soft: #f4f4f5;
+  --accent-border: #e4e4e7;
+  --on-accent: #ffffff;
+
+  /* Surfaces & Typography */
+  --text: #18181b;
+  --text-secondary: #52525b;
+  --muted: #5e5e66;
+  --muted-icon: #767680;
+  --border: #e4e4e7;
+  --border-subtle: #f4f4f5;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --input-bg: #ffffff;
+
+  /* Layout */
+  --container-max-width: 640px;
+
+  /* Radius & Curves */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Elevation & Shadows */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-switch: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --focus-ring: 0 0 0 3px rgba(24, 24, 27, 0.12);
+
+  color-scheme: light;
+}
+
+html.dark {
+  /* Brand / Accent */
+  --accent: #f4f4f5;
+  --accent-strong: #ffffff;
+  --accent-bg: rgba(255, 255, 255, 0.08);
+  --accent-soft: rgba(255, 255, 255, 0.06);
+  --accent-border: rgba(255, 255, 255, 0.14);
+  --on-accent: #09090b;
+
+  /* Surfaces & Typography */
+  --text: #fafafa;
+  --text-secondary: #a1a1aa;
+  --muted: #a1a1aa;
+  --muted-icon: #8e8e96;
+  --border: #27272a;
+  --border-subtle: #18181b;
+  --bg: #09090b;
+  --card: #121215;
+  --input-bg: #18181b;
+
+  /* Elevation & Shadows */
+  --shadow-card: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-switch: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.18);
+
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   2. BASE RESET, TYPOGRAPHY & APP LAYOUT
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 16px 64px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Top Bar & Theme Switcher ── */
+.top-bar {
+  width: 100%;
+  max-width: var(--container-max-width);
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 2px;
+  box-shadow: var(--shadow-switch);
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.theme-btn:hover {
+  color: var(--text);
+}
+
+.theme-btn.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.theme-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ── Header ── */
+header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.header-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+header p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* ── Screen-Reader Only Accessible Utility ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ==========================================================================
+   3. FORM CARD, INPUT CONTROLS & SELECTION PILLS
+   ========================================================================== */
+
+/* ── Card Container ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  width: 100%;
+  max-width: var(--container-max-width);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* ── Form Fields ── */
+.field {
+  margin-bottom: 22px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.field-label label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.field-hint {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+/* ── Quick Select Pills ── */
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.pill {
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform 0.1s;
+}
+
+.pill:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-bg);
+}
+
+.pill:active {
+  transform: scale(0.97);
+}
+
+.pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.pill:focus-visible,
+.pill-date-wrap:focus-within .pill {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pill-date-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.pill-date-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.pill-date-wrap .pill {
+  pointer-events: none;
+}
+
+/* ── Ramadan Notification Banner ── */
+.pill-note {
+  display: none;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-top: 12px;
+}
+
+.pill-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pill-note-text {
+  flex: 1;
+}
+
+.pill-note-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 3px;
+  margin: -2px -2px 0 4px;
+  border-radius: 4px;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.pill-note-close:hover {
+  color: var(--text);
+  background: var(--accent-bg);
+}
+
+.pill-note-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ── Form Inputs ── */
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+
+input[type="number"],
+select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--input-bg);
+  outline: none;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+input[type="number"]:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+select {
+  flex: 2;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235e5e66' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 34px;
+  cursor: pointer;
+}
+
+html.dark select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a1a1aa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+html.dark select option {
+  background-color: var(--card);
+  color: var(--text);
+}
+
+input#startAyah {
+  flex: 1;
+  min-width: 84px;
+}
+
+/* ==========================================================================
+   4. ACTION BUTTONS & INTERACTIVE CONTROLS
+   ========================================================================== */
+
+/* ── Primary Action Button ── */
+.btn {
+  width: 100%;
+  padding: 13px;
+  margin-top: 22px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-base), opacity var(--transition-fast), transform 0.1s;
+  letter-spacing: 0.01em;
+}
+
+.btn:hover {
+  background: var(--accent-strong);
+  opacity: 0.94;
+}
+
+.btn:active {
+  transform: scale(0.99);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Results Action Row (Download & Reset) ── */
+.results-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+  padding: 11px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base), transform 0.1s;
+  letter-spacing: 0.01em;
+}
+
+.btn-download:hover {
+  background: var(--accent-bg);
+}
+
+.btn-download:active {
+  transform: scale(0.99);
+}
+
+.btn-download:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn-download:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-download svg {
+  flex-shrink: 0;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 16px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base), transform 0.1s;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: var(--accent-bg);
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.btn-secondary:active {
+  transform: scale(0.99);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   5. RESULTS CARD, SUMMARY STATISTICS & SCHEDULE TABLE
+   ========================================================================== */
+
+/* ── Results Container ── */
+#results {
+  display: none;
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-top: 24px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.results-header {
+  display: none;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+#resultsExportClone .results-header {
+  display: block;
+}
+
+.results-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.results-subtitle {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.results-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 0.74rem;
+  color: var(--muted);
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+
+/* ── Plan Summary Stats ── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.stat {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: var(--shadow-subtle);
+  transition: transform var(--transition-fast);
+}
+
+.stat:hover {
+  transform: translateY(-1px);
+}
+
+.stat-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-lbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ── Plan Day-by-Day Table ── */
+.plan-header {
+  display: grid;
+  grid-template-columns: 111px 1fr auto;
+  gap: 8px;
+  padding: 0 14px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  align-items: center;
+}
+
+.day-row {
+  display: grid;
+  grid-template-columns: 111px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.day-row:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.day-row.today {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.day-info {
+  line-height: 1.1;
+}
+
+.day-num {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.day-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.today-pill {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.surah-info {
+  min-width: 0;
+}
+
+.surah-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.surah-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.surah-arabic {
+  font-family: 'Amiri', 'Arial', serif;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  direction: rtl;
+}
+
+.ayah-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.ayah-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: var(--radius-xs);
+  padding: 4px 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.daily-stat {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: var(--radius-xs);
+  padding: 4px 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  line-height: 1.2;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+.daily-stat:active {
+  transform: scale(0.95);
+}
+
+.day-row.today .ayah-badge,
+.day-row.today .daily-stat {
+  background: var(--card);
+}
+
+/* ── Daily Stat Tooltip ── */
+.daily-stat-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: var(--text);
+  color: var(--card);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transform: translateX(-50%);
+  animation: tooltipFade 0.15s ease-out;
+}
+
+/* ── Keyframe Animations ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ==========================================================================
+   6. TOAST NOTIFICATIONS & ANIMATED ALERTS
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  width: 100%;
+  max-width: 440px;
+  padding: 0 16px;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  box-shadow: var(--shadow-card);
+  animation: toast-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  cursor: pointer;
+}
+
+.toast:hover {
+  box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.12);
+}
+
+html.dark .toast:hover {
+  box-shadow: 0 6px 28px -2px rgba(0, 0, 0, 0.6);
+}
+
+.toast-hiding {
+  animation: toast-out 0.2s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.toast-info .toast-icon {
+  color: var(--accent);
+}
+
+.toast-warning .toast-icon {
+  color: #f59e0b;
+}
+
+.toast-error .toast-icon {
+  color: #ef4444;
+}
+
+.toast-success .toast-icon {
+  color: #10b981;
+}
+
+.toast-message {
+  flex: 1;
+  word-break: break-word;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.toast-close:hover {
+  color: var(--text);
+  background: var(--accent-bg);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+}
+
+@keyframes toast-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.toast-vibrate {
+  animation: toast-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+}
+
+@media (max-width: 480px) {
+  .toast-container {
+    top: 16px;
+    max-width: 100%;
+    padding: 0 12px;
+  }
+
+  .toast {
+    font-size: 0.84rem;
+    padding: 10px 12px;
+  }
+}
+
+/* ==========================================================================
+   7. RESPONSIVE BREAKPOINTS & MOBILE ADAPTATIONS
+   ========================================================================== */
+
+@media (max-width: 540px) {
+  body {
+    padding: 20px 12px 48px;
+  }
+
+  header {
+    margin-bottom: 24px;
+  }
+
+  header h1 {
+    font-size: 2.1rem;
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    font-size: 0.86rem;
+  }
+
+  .card {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .pill-row {
+    gap: 6px;
+  }
+
+  .pill {
+    padding: 6px 10px;
+    font-size: 0.74rem;
+  }
+
+  .stats {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .stat {
+    padding: 10px 6px;
+  }
+
+  .stat-val {
+    font-size: 1.15rem;
+  }
+
+  .stat-lbl {
+    font-size: 0.67rem;
+  }
+
+  .plan-header {
+    grid-template-columns: 86px 1fr auto;
+    padding: 0 10px 6px;
+    gap: 6px;
+    font-size: 0.68rem;
+  }
+
+  .day-row {
+    grid-template-columns: 86px 1fr auto;
+    padding: 10px 10px;
+    gap: 6px;
+  }
+
+  .day-num {
+    font-size: 0.78rem;
+  }
+
+  .day-date {
+    font-size: 0.68rem;
+  }
+
+  .today-pill {
+    font-size: 0.58rem;
+    padding: 1px 4px;
+  }
+
+  .surah-name {
+    font-size: 0.84rem;
+  }
+
+  .surah-meta {
+    font-size: 0.7rem;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .surah-arabic {
+    font-size: 0.78rem;
+  }
+
+  .ayah-target {
+    gap: 4px;
+  }
+
+  .ayah-badge {
+    font-size: 0.72rem;
+    padding: 4px 7px;
+  }
+
+  .daily-stat {
+    min-width: 20px;
+    font-size: 0.72rem;
+    padding: 4px 5px;
+  }
+
+  .results-actions {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .results-actions .btn-download {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 0.82rem;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 380px) {
+  body {
+    padding: 16px 8px 40px;
+  }
+
+  header h1 {
+    font-size: 1.85rem;
+  }
+
+  .card {
+    padding: 16px 12px;
+  }
+
+  .plan-header {
+    grid-template-columns: 76px 1fr auto;
+    gap: 4px;
+    padding: 0 8px 4px;
+  }
+
+  .day-row {
+    grid-template-columns: 76px 1fr auto;
+    padding: 8px 8px;
+    gap: 4px;
+  }
+
+  .day-num {
+    font-size: 0.74rem;
+  }
+
+  .day-date {
+    font-size: 0.64rem;
+  }
+
+  .surah-name {
+    font-size: 0.8rem;
+  }
+
+  .surah-meta {
+    font-size: 0.66rem;
+  }
+
+  .ayah-target {
+    gap: 3px;
+  }
+
+  .ayah-badge {
+    font-size: 0.68rem;
+    padding: 3px 6px;
+  }
+
+  .daily-stat {
+    min-width: 18px;
+    font-size: 0.66rem;
+    padding: 3px 4px;
+  }
+
+  .results-actions {
+    gap: 6px;
+  }
+
+  .results-actions .btn-download {
+    padding: 9px 6px;
+    font-size: 0.78rem;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 340px) {
+  .results-actions .btn-download {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px 6px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+}
