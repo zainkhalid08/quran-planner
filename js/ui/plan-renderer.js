@@ -9,7 +9,8 @@
  * What you can find in this file:
  * - Formatters: Cached instances of `Intl.NumberFormat` and `Intl.DateTimeFormat`.
  * - `renderPlan`: Primary rendering function updating summary statistics (`statDays`, `statAvg`),
- *   generating day rows, and attaching formatted completion timestamps.
+ *   generating day rows with ARIA list semantics (`role="listitem"`, `aria-posinset`, `aria-setsize`),
+ *   and attaching formatted completion timestamps.
  */
 
 import { DOM } from './dom.js';
@@ -54,6 +55,11 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
   if (DOM.statDays) DOM.statDays.textContent = days;
   if (DOM.statAvg) DOM.statAvg.textContent = numberFormatter.format(Math.round(remaining / days));
 
+  if (DOM.planRows) {
+    DOM.planRows.setAttribute('role', 'list');
+    DOM.planRows.setAttribute('aria-label', `Day-by-day reading schedule for ${days} days`);
+  }
+
   // Batch DOM row insertions using a DocumentFragment to eliminate per-row layout reflows
   const fragment = document.createDocumentFragment();
 
@@ -61,6 +67,9 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
     const item = schedule[i];
     const row = document.createElement('div');
     row.className = 'day-row';
+    row.setAttribute('role', 'listitem');
+    row.setAttribute('aria-posinset', String(item.day));
+    row.setAttribute('aria-setsize', String(days));
 
     const wordsCountStr = item.dayWordsCount != null ? numberFormatter.format(item.dayWordsCount) : '';
 
@@ -68,19 +77,19 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
       <div class="day-info">
         <div class="day-num">Day ${item.day}</div>
         <div class="day-date">${item.dateStr}</div>
-        ${item.isToday ? '<span class="today-pill">Today</span>' : ''}
+        ${item.isToday ? '<span class="today-pill" aria-label="Today\'s reading">Today</span>' : ''}
       </div>
       <div class="surah-info">
         <div class="surah-name">${item.surah.name}</div>
         <div class="surah-meta">
           <span>Surah ${item.surah.number}</span>
-          <span class="surah-arabic">${item.surah.arabic}</span>
+          <span class="surah-arabic" lang="ar" dir="rtl">${item.surah.arabic}</span>
         </div>
       </div>
       <div class="ayah-target">
         <span class="ayah-badge">Read till ayah ${item.targetAyah}</span>
-        ${CONFIG.showDailyAyahsCount ? `<span class="daily-stat" title="Ayahs to read">${item.dayAyahsCount}</span>` : ''}
-        ${CONFIG.showDailyWordsCount ? `<span class="daily-stat" title="Words to read">${wordsCountStr}</span>` : ''}
+        ${CONFIG.showDailyAyahsCount ? `<span class="daily-stat" title="Ayahs to read" aria-label="${item.dayAyahsCount} ayahs to read">${item.dayAyahsCount}</span>` : ''}
+        ${CONFIG.showDailyWordsCount ? `<span class="daily-stat" title="Words to read" aria-label="${wordsCountStr} words to read">${wordsCountStr}</span>` : ''}
       </div>
     `;
     fragment.appendChild(row);
