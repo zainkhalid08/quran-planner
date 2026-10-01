@@ -65,15 +65,30 @@ async function downloadPlan(options = {}) {
       await document.fonts.ready;
     }
 
+    // Calculate dynamic resolution scaling to prevent exceeding mobile canvas limits (e.g. Safari 16MP ceiling)
+    const cloneWidth = cardClone.offsetWidth || 640;
+    const cloneHeight = cardClone.offsetHeight || cardClone.scrollHeight || 1000;
+    const naturalArea = cloneWidth * cloneHeight;
+    const MAX_CANVAS_AREA = 12_000_000; // 12 MP safe ceiling across mobile WebKit and memory constraints
+    const MAX_CANVAS_DIMENSION = 16_000; // Safe upper bound for maximum single dimension
+    const IDEAL_SCALE = 2.5; // High-DPI crisp export for standard plan lengths
+
+    let scale = Math.min(
+      IDEAL_SCALE,
+      Math.sqrt(MAX_CANVAS_AREA / naturalArea),
+      MAX_CANVAS_DIMENSION / cloneHeight
+    );
+    scale = Math.max(1.0, Math.round(scale * 100) / 100);
+
     const isDarkMode = document.documentElement.classList.contains('dark');
     const canvas = await html2canvas(cardClone, {
-      scale: 3,
+      scale,
       useCORS: true,
       backgroundColor: isDarkMode ? '#0d0d0d' : '#ffffff',
       logging: false,
     });
 
-    const statDaysEl = typeof DOM !== 'undefined' && DOM.statDays ? DOM.statDays : document.getElementById('statDays');
+    const statDaysEl = DOM.statDays || document.getElementById('statDays');
     const totalDays = statDaysEl ? statDaysEl.textContent : 'custom';
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
     if (!blob) {
