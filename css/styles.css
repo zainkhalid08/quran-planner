@@ -1392,10 +1392,6 @@ html.dark .toast:hover {
     widows: 3 !important;
   }
 
-  .day-row:nth-child(even) {
-    background-color: #f9fafb !important;
-  }
-
   .day-info {
     width: 75pt !important;
     min-width: 75pt !important;
