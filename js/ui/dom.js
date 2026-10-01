@@ -19,7 +19,6 @@ export const DOM = {
   resultsFooter: document.getElementById('resultsFooter'),
   planRows: document.getElementById('planRows'),
   statDays: document.getElementById('statDays'),
-  statRemaining: document.getElementById('statRemaining'),
   statAvg: document.getElementById('statAvg'),
   pickDatePill: document.getElementById('pickDatePill'),
   pickDateInput: document.getElementById('pickDateInput'),

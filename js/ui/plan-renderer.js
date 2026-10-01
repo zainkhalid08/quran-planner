@@ -8,7 +8,7 @@
  *
  * What you can find in this file:
  * - Formatters: Cached instances of `Intl.NumberFormat` and `Intl.DateTimeFormat`.
- * - `renderPlan`: Primary rendering function updating summary statistics (`statDays`, `statRemaining`, `statAvg`),
+ * - `renderPlan`: Primary rendering function updating summary statistics (`statDays`, `statAvg`),
  *   generating day rows, and attaching formatted completion timestamps.
  */
 
@@ -51,9 +51,8 @@ function getResultsDateFormatter() {
 function renderPlan({ days, remaining, schedule, planStartDate }) {
   const numberFormatter = getNumberFormatter();
 
-  DOM.statDays.textContent = days;
-  DOM.statRemaining.textContent = numberFormatter.format(remaining);
-  DOM.statAvg.textContent = numberFormatter.format(Math.round(remaining / days));
+  if (DOM.statDays) DOM.statDays.textContent = days;
+  if (DOM.statAvg) DOM.statAvg.textContent = numberFormatter.format(Math.round(remaining / days));
 
   // Batch DOM row insertions using a DocumentFragment to eliminate per-row layout reflows
   const fragment = document.createDocumentFragment();
