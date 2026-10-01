@@ -1,7 +1,19 @@
 /**
- * Plan Renderer
- * Renders the day-by-day plan rows and summary statistics in the DOM.
+ * @file plan-renderer.js
+ * @description DOM rendering engine for plan summary metrics and day-by-day reading schedule rows.
+ *
+ * What is this file for:
+ * - Formats and renders the calculated schedule into the DOM using batched `DocumentFragment` updates
+ *   to eliminate layout reflows and display summary statistics.
+ *
+ * What you can find in this file:
+ * - Formatters: Cached instances of `Intl.NumberFormat` and `Intl.DateTimeFormat`.
+ * - `renderPlan`: Primary rendering function updating summary statistics (`statDays`, `statRemaining`, `statAvg`),
+ *   generating day rows, and attaching formatted completion timestamps.
  */
+
+import { DOM } from './dom.js';
+import { CONFIG } from '../config.js';
 
 /**
  * Cached formatters to prevent repeated synchronous Intl instantiation.
@@ -97,10 +109,5 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
   }
 }
 
-if (typeof window !== 'undefined') {
-  window.renderPlan = renderPlan;
-}
+export { renderPlan };
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { renderPlan };
-}

@@ -1,9 +1,16 @@
-/* ── Floating Stat Tooltips ── */
-
 /**
- * Initializes floating tooltip handler for daily stat pills.
+ * @file tooltips.js
+ * @description Floating positioned tooltips for daily reading badges and stat indicators.
+ *
+ * What is this file for:
+ * - Dynamically positions and renders touch- and click-activated tooltips for daily statistic badges,
+ *   handling viewport collision detection and auto-dismissal.
+ *
+ * What you can find in this file:
+ * - `initStatTooltips`: Initializes document click and scroll listeners to show, position, and dismiss `.daily-stat-tooltip` elements.
  */
-function initStatTooltips() {
+
+export function initStatTooltips() {
   let activeTooltip = null;
   let hideTimeout = null;
 

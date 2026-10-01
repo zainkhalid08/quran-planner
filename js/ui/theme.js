@@ -1,11 +1,26 @@
-// ── Theme Management (light, system, dark) ──
+/**
+ * @file theme.js
+ * @description Theme management supporting light mode, dark mode, and system color scheme synchronization.
+ *
+ * What is this file for:
+ * - Controls visual theme switching, updates HTML class attributes, keeps theme buttons in sync,
+ *   and listens to OS-level system theme changes.
+ *
+ * What you can find in this file:
+ * - `applyTheme`: Applies `.dark` class to `document.documentElement` and toggles aria-pressed on buttons.
+ * - `setTheme`: Persists selected preference to `Storage` and invokes `applyTheme`.
+ * - `initTheme`: Binds click handlers to theme toggle buttons and registers system `matchMedia` listener.
+ */
+import { Storage } from '../services/storage.js';
+
+
 const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 /**
  * Applies the visual theme class to <html> and updates active state of theme buttons.
  * @param {'light'|'system'|'dark'} preference - The desired theme setting.
  */
-function applyTheme(preference) {
+export function applyTheme(preference) {
   const prefersDark = themeMediaQuery.matches;
   const effectiveDark = preference === 'dark' || (preference === 'system' && prefersDark);
   document.documentElement.classList.toggle('dark', effectiveDark);
@@ -22,7 +37,7 @@ function applyTheme(preference) {
  * Saves user theme choice to storage and updates the page theme.
  * @param {'light'|'system'|'dark'} preference - Theme selected by the user.
  */
-function setTheme(preference) {
+export function setTheme(preference) {
   Storage.setItem(Storage.KEYS.THEME, preference);
   applyTheme(preference);
 }
@@ -30,7 +45,7 @@ function setTheme(preference) {
 /**
  * Initializes theme events and initial state.
  */
-function initTheme() {
+export function initTheme() {
   const themeButtons = document.querySelectorAll('.theme-btn');
   themeButtons.forEach(button => {
     button.addEventListener('click', () => setTheme(button.dataset.theme));
@@ -46,3 +61,4 @@ function initTheme() {
   const currentThemePref = Storage.getItem(Storage.KEYS.THEME, 'system');
   applyTheme(currentThemePref);
 }
+

@@ -1,5 +1,21 @@
-/* ── Storage Service ── */
+/**
+ * @file storage.js
+ * @description Safe localStorage abstraction layer for user preferences and plan persistence.
+ *
+ * What is this file for:
+ * - Provides defensive, try/catch-wrapped storage methods to handle browser storage access
+ *   (including private browsing modes and quota restrictions) gracefully without throwing uncaught exceptions.
+ *
+ * What you can find in this file:
+ * - `Storage.KEYS`: Centralized registry of localStorage keys (`PLAN`, `THEME`).
+ * - `Storage.getItem`: Safe string retrieval with default fallback.
+ * - `Storage.getJSON`: Safe JSON parsing with default fallback.
+ * - `Storage.setItem`: Safe serialization and persistence.
+ * - `Storage.removeItem`: Safe key removal.
+ * - `storageService`: Alias export for compatibility.
+ */
 const Storage = {
+
   KEYS: {
     PLAN: 'quran_planner_saved_plan',
     THEME: 'quran_planner_theme_preference'
@@ -67,11 +83,6 @@ const Storage = {
 
 const storageService = Storage;
 
-if (typeof window !== 'undefined') {
-  window.Storage = Storage;
-  window.storageService = storageService;
-}
+export { Storage, storageService };
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { Storage, storageService };
-}
+

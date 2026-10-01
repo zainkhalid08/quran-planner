@@ -1,5 +1,16 @@
-/* ── Cached DOM Elements ── */
-const DOM = {
+/**
+ * @file dom.js
+ * @description Centralized registry of cached DOM element references.
+ *
+ * What is this file for:
+ * - Provides pre-queried element references across the application, avoiding repeated `document.getElementById` calls.
+ *
+ * What you can find in this file:
+ * - `DOM`: Object mapping semantic keys (e.g. `days`, `startSurah`, `generatePlanBtn`, `results`, `downloadBtn`)
+ *   to their corresponding live DOM elements.
+ */
+export const DOM = {
+
   days: document.getElementById('days'),
   startSurah: document.getElementById('startSurah'),
   startAyah: document.getElementById('startAyah'),
@@ -21,10 +32,3 @@ const DOM = {
   card: document.querySelector('.card')
 };
 
-if (typeof window !== 'undefined') {
-  window.DOM = DOM;
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { DOM };
-}

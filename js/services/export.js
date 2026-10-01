@@ -1,4 +1,18 @@
-/* ── Export Service ── */
+/**
+ * @file export.js
+ * @description Image export service converting reading schedule cards to downloadable PNG images.
+ *
+ * What is this file for:
+ * - Uses html2canvas to clone, style, render, and download the user's generated reading plan as a PNG image.
+ *
+ * What you can find in this file:
+ * - `downloadPlan`: Asynchronous function handling DOM cloning at standard width, html2canvas rendering,
+ *   Blob generation, and simulated link click download.
+ * - `exportService`: Namespace object grouping export capabilities.
+ */
+import { DOM } from '../ui/dom.js';
+
+import { showToast } from '../ui/toast.js';
 
 /**
  * Renders the plan card onto a canvas using html2canvas and triggers a PNG file download.
@@ -8,15 +22,14 @@
  * @returns {Promise<void>}
  */
 async function downloadPlan(options = {}) {
-  const downloadButton = options.buttonElement || (typeof DOM !== 'undefined' ? DOM.downloadBtn : document.getElementById('downloadBtn'));
-  const sourceElement = options.targetElement || (typeof DOM !== 'undefined' ? DOM.results : document.getElementById('results'));
+  const downloadButton = options.buttonElement || DOM.downloadBtn;
+  const sourceElement = options.targetElement || DOM.results;
 
   if (!sourceElement) {
-    if (typeof showToast === 'function') {
-      showToast('No plan found to download.', 'warning');
-    }
+    showToast('No plan found to download.', 'warning');
     return;
   }
+
 
   if (downloadButton) {
     downloadButton.disabled = true;
@@ -100,11 +113,5 @@ const exportService = {
   downloadPlan
 };
 
-if (typeof window !== 'undefined') {
-  window.downloadPlan = downloadPlan;
-  window.exportService = exportService;
-}
+export { downloadPlan, exportService };
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { downloadPlan, exportService };
-}

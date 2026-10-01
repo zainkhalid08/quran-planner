@@ -1,7 +1,20 @@
 /**
- * Cached Hijri DateTimeFormat instance to prevent synchronous instantiation in search loops.
+ * @file ramadan.js
+ * @description Islamic Hijri calendar calculations and Ramadan date estimation.
+ *
+ * What is this file for:
+ * - Uses the Umm al-Qura calendar via the browser's native `Intl.DateTimeFormat` API
+ *   to determine current Hijri dates and estimate upcoming Ramadan start and completion dates.
+ *
+ * What you can find in this file:
+ * - `getHijriFormatter`: Singleton accessor for the cached Umm al-Qura date formatter.
+ * - `getHijriDateParts`: Extracts day, month, and year from a Gregorian Date.
+ * - `getNextRamadanStart`: Finds the Gregorian date corresponding to the upcoming 1st of Ramadan.
+ * - `getEndRamadanPlan`: Calculates remaining days to complete the reading plan by the 29th of Ramadan.
  */
+
 let cachedHijriFormatter = null;
+
 let isHijriFormatterSupported = true;
 
 /**
@@ -133,18 +146,10 @@ function getEndRamadanPlan(from = new Date()) {
   };
 }
 
-if (typeof window !== 'undefined') {
-  window.getHijriFormatter = getHijriFormatter;
-  window.getHijriDateParts = getHijriDateParts;
-  window.getNextRamadanStart = getNextRamadanStart;
-  window.getEndRamadanPlan = getEndRamadanPlan;
-}
+export {
+  getHijriFormatter,
+  getHijriDateParts,
+  getNextRamadanStart,
+  getEndRamadanPlan
+};
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    getHijriFormatter,
-    getHijriDateParts,
-    getNextRamadanStart,
-    getEndRamadanPlan
-  };
-}

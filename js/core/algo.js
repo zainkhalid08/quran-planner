@@ -1,4 +1,29 @@
-/* ── Core Algorithm Functions ── */
+/**
+ * @file algo.js
+ * @description Core schedule generation algorithm, boundary enforcement, and mathematical mapping.
+ *
+ * What is this file for:
+ * - Implements the mathematical and passage-snapping logic to divide remaining Quran reading
+ *   volume evenly across any specified number of target days without rounding drift.
+ *
+ * What you can find in this file:
+ * - Coordinate mapping: `ayahsBefore`, `wordsBefore`, `getSurahAndAyahFromCumulative` (binary search).
+ * - Target solvers: `findNearestAyahByWords`, `snapToNearestRuku` (O(log N) binary search over Rukus).
+ * - Extensible registries: `DAY_ENDING_HANDLERS` (MATHEMATICAL, NEAREST_RUKU) and `CALCULATION_STRATEGIES`.
+ * - `calculatePlan`: The primary planning pipeline enforcing daily boundaries (`minAllowed <= target <= maxAllowed`).
+ */
+import { CONSTANTS, SURAHS } from '../data/surahs.js';
+
+import {
+  SURAH_START_AYAHS,
+  CUMULATIVE_RUKU_ENDINGS,
+  CUMULATIVE_WORDS
+} from './lookup-tables.js';
+import {
+  CONFIG,
+  READING_CALCULATION_MODES,
+  DAY_ENDING_STRATEGIES
+} from '../config.js';
 
 /**
  * Calculates the total ayahs read from Surah 1 up to a given Surah and ayah offset.
@@ -294,28 +319,14 @@ function calculatePlan({
   };
 }
 
-if (typeof window !== 'undefined') {
-  window.ayahsBefore = ayahsBefore;
-  window.wordsBefore = wordsBefore;
-  window.getSurahAndAyahFromCumulative = getSurahAndAyahFromCumulative;
-  window.findNearestAyahByWords = findNearestAyahByWords;
-  window.snapToNearestRuku = snapToNearestRuku;
-  window.getPlanDateFormatter = getPlanDateFormatter;
-  window.calculatePlan = calculatePlan;
-  window.DAY_ENDING_HANDLERS = DAY_ENDING_HANDLERS;
-  window.CALCULATION_STRATEGIES = CALCULATION_STRATEGIES;
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    ayahsBefore,
-    wordsBefore,
-    getSurahAndAyahFromCumulative,
-    findNearestAyahByWords,
-    snapToNearestRuku,
-    getPlanDateFormatter,
-    calculatePlan,
-    DAY_ENDING_HANDLERS,
-    CALCULATION_STRATEGIES
-  };
-}
+export {
+  ayahsBefore,
+  wordsBefore,
+  getSurahAndAyahFromCumulative,
+  findNearestAyahByWords,
+  snapToNearestRuku,
+  DAY_ENDING_HANDLERS,
+  CALCULATION_STRATEGIES,
+  getPlanDateFormatter,
+  calculatePlan
+};

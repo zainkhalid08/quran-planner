@@ -1,4 +1,27 @@
-/* ── UI Events & Form Handlers ── */
+/**
+ * @file events.js
+ * @description User interaction management, form synchronization, quick-select pill handlers, and UI event binding.
+ *
+ * What is this file for:
+ * - Manages all interactive DOM event listeners and binds user actions (pills, dates, enter keys, buttons)
+ *   to controller services.
+ *
+ * What you can find in this file:
+ * - `populateSurahDropdown`: Fills the starting Surah `<select>` using a batched DocumentFragment.
+ * - `updateAyahMax`: Synchronizes starting ayah max limits and placeholder when Surah selection changes.
+ * - `initDateBounds`: Sets date boundary limits on the target date picker input.
+ * - `clearRamadanNote`: Helper to hide the informational Ramadan banner.
+ * - `initUIEvents`: Orchestrates all event attachments for pills, custom dates, keyboard triggers, and action buttons.
+ */
+import { DOM } from './dom.js';
+
+import { CONSTANTS, SURAHS } from '../data/surahs.js';
+import { initTheme } from './theme.js';
+import { initStatTooltips } from './tooltips.js';
+import { showToast } from './toast.js';
+import { getNextRamadanStart, getEndRamadanPlan } from '../calendar/ramadan.js';
+import { generatePlan, clearPlan } from '../services/plan-service.js';
+import { downloadPlan } from '../services/export.js';
 
 /**
  * Populates the starting Surah dropdown list from the SURAHS array.
@@ -266,20 +289,11 @@ function initUIEvents() {
   }
 }
 
-if (typeof window !== 'undefined') {
-  window.populateSurahDropdown = populateSurahDropdown;
-  window.updateAyahMax = updateAyahMax;
-  window.initDateBounds = initDateBounds;
-  window.clearRamadanNote = clearRamadanNote;
-  window.initUIEvents = initUIEvents;
-}
+export {
+  populateSurahDropdown,
+  updateAyahMax,
+  initDateBounds,
+  clearRamadanNote,
+  initUIEvents
+};
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    populateSurahDropdown,
-    updateAyahMax,
-    initDateBounds,
-    clearRamadanNote,
-    initUIEvents
-  };
-}

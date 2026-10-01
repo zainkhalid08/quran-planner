@@ -1,4 +1,25 @@
-/* ── Plan Service ── */
+/**
+ * @file plan-service.js
+ * @description Application controller managing plan generation lifecycle, validation, persistence, and reset.
+ *
+ * What is this file for:
+ * - Bridges user interactions from the form inputs to the algorithm engine and the renderer,
+ *   handling input validation, storage updates, and UI scrolling.
+ *
+ * What you can find in this file:
+ * - `generatePlan`: Validates form inputs, invokes `calculatePlan`, persists inputs to `Storage`, and triggers `renderPlan`.
+ * - `clearPlan`: Resets input fields, clears saved storage data, and collapses results.
+ * - `loadSavedPlan`: Automatically reloads and renders a previously saved plan upon page load.
+ * - `planService`: Controller bundle object.
+ */
+import { DOM } from '../ui/dom.js';
+
+import { CONSTANTS, SURAHS } from '../data/surahs.js';
+import { Storage } from './storage.js';
+import { showToast } from '../ui/toast.js';
+import { ayahsBefore, calculatePlan } from '../core/algo.js';
+import { renderPlan } from '../ui/plan-renderer.js';
+import { updateAyahMax, clearRamadanNote } from '../ui/events.js';
 
 /**
  * Validates inputs, invokes calculatePlan from algo.js, saves the plan, and renders it.
@@ -7,10 +28,11 @@
  * @param {boolean} [skipScroll=false] - Whether to skip smooth scrolling to results.
  */
 function generatePlan(customStartDate, skipScroll) {
-  const daysInput = typeof DOM !== 'undefined' && DOM.days ? DOM.days : document.getElementById('days');
-  const startSurahSelect = typeof DOM !== 'undefined' && DOM.startSurah ? DOM.startSurah : document.getElementById('startSurah');
-  const startAyahInput = typeof DOM !== 'undefined' && DOM.startAyah ? DOM.startAyah : document.getElementById('startAyah');
-  const resultsCard = typeof DOM !== 'undefined' && DOM.results ? DOM.results : document.getElementById('results');
+  const daysInput = DOM.days;
+  const startSurahSelect = DOM.startSurah;
+  const startAyahInput = DOM.startAyah;
+  const resultsCard = DOM.results;
+
 
   const days = parseInt(daysInput.value);
   if (!days || days < 1) {
@@ -153,13 +175,5 @@ const planService = {
   loadSavedPlan
 };
 
-if (typeof window !== 'undefined') {
-  window.generatePlan = generatePlan;
-  window.clearPlan = clearPlan;
-  window.loadSavedPlan = loadSavedPlan;
-  window.planService = planService;
-}
+export { generatePlan, clearPlan, loadSavedPlan, planService };
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { generatePlan, clearPlan, loadSavedPlan, planService };
-}
