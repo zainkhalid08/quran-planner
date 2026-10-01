@@ -1,13 +1,15 @@
 /**
  * @file export.js
- * @description Image export service converting reading schedule cards to downloadable PNG images.
+ * @description Export service converting reading schedule cards to downloadable PNG images and printable vector PDFs.
  *
  * What is this file for:
  * - Uses html2canvas to clone, style, render, and download the user's generated reading plan as a PNG image.
+ * - Triggers native multi-page vector printing and Save-as-PDF via `window.print()`.
  *
  * What you can find in this file:
  * - `downloadPlan`: Asynchronous function handling DOM cloning at standard width, html2canvas rendering,
  *   Blob generation, and simulated link click download.
+ * - `printPlan`: Triggers the browser's native print / save as PDF dialog for the generated plan.
  * - `exportService`: Namespace object grouping export capabilities.
  */
 import { DOM } from '../ui/dom.js';
@@ -124,9 +126,22 @@ async function downloadPlan(options = {}) {
   }
 }
 
+/**
+ * Triggers the browser's native print / save as PDF dialog for the generated reading plan.
+ * @returns {void}
+ */
+function printPlan() {
+  if (!DOM.results || DOM.results.style.display === 'none') {
+    showToast('Please generate a plan first to print or save as PDF.', 'warning');
+    return;
+  }
+  window.print();
+}
+
 const exportService = {
-  downloadPlan
+  downloadPlan,
+  printPlan
 };
 
-export { downloadPlan, exportService };
+export { downloadPlan, printPlan, exportService };
 

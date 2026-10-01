@@ -11,6 +11,7 @@
    5. Results Card, Summary Statistics & Schedule Table
    6. Toast Notifications & Animated Alerts
    7. Responsive Breakpoints & Mobile Adaptations
+   8. Print Stylesheet & Multi-Page PDF Generation
    ========================================================================== */
 
 /* ==========================================================================
@@ -450,9 +451,10 @@ input#startAyah {
   outline-offset: 2px;
 }
 
-/* ── Results Action Row (Download & Reset) ── */
+/* ── Results Action Row (Print, Download & Reset) ── */
 .results-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 14px;
 }
@@ -462,19 +464,23 @@ input#startAyah {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  flex: 1;
-  min-width: 0;
-  padding: 11px;
+  flex: 1 1 0;
+  min-width: 130px;
+  padding: 11px 12px;
   background: transparent;
   color: var(--accent);
   border: 1px solid var(--accent);
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   transition: background var(--transition-base), color var(--transition-base), transform 0.1s;
   letter-spacing: 0.01em;
+}
+
+#downloadBtn {
+  display: none !important;
 }
 
 .btn-download:hover {
@@ -1149,3 +1155,328 @@ html.dark .toast:hover {
     gap: 4px;
   }
 }
+
+/* ==========================================================================
+   8. PRINT STYLESHEET & MULTI-PAGE PDF GENERATION
+   ========================================================================== */
+
+@media print {
+  @page {
+    size: auto;
+    margin: 12mm 18mm 15mm 15mm;
+  }
+
+  /* Force clean black text on white background and preserve exact graphics */
+  *,
+  *::before,
+  *::after {
+    color-scheme: light !important;
+    background-color: transparent !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Switch body out of flex context to allow native multi-page pagination */
+  html,
+  body {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    float: none !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+
+  /* Completely hide all screen chrome, forms, pills, buttons, and headers */
+  body > *:not(#results),
+  .top-bar,
+  header,
+  #plannerFormCard,
+  .card:not(#results),
+  .field,
+  .field-label,
+  .input-row,
+  .pill-row,
+  .pill-note,
+  #ramadanNote,
+  .btn,
+  .btn-download,
+  .results-actions,
+  #resultsActions,
+  .toast-container,
+  .tooltip,
+  button,
+  input,
+  select {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+
+  /* Results plan card takes full printable page width */
+  #results {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 4pt 0 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    transform: none !important;
+    animation: none !important;
+    filter: none !important;
+  }
+
+  /* Printable document header - center aligned with no separator line */
+  .results-header {
+    display: block !important;
+    text-align: center !important;
+    border-bottom: none !important;
+    padding-bottom: 2pt !important;
+    margin-bottom: 8pt !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .results-title {
+    font-size: 20pt !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5pt !important;
+    color: #000000 !important;
+    text-align: center !important;
+  }
+
+  .results-subtitle {
+    font-size: 10pt !important;
+    color: #4b5563 !important;
+    margin-top: 2pt !important;
+    text-align: center !important;
+  }
+
+  /* Summary statistics: each stat in its own distinct container matching the website design */
+  .stats {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    gap: 8pt !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding: 0 14pt 0 8pt !important;
+    margin: 0 0 14pt 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .stat {
+    flex: 1 1 0 !important;
+    background: #f9fafb !important;
+    border: 1pt solid #e5e7eb !important;
+    border-radius: 6pt !important;
+    padding: 8pt 6pt !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .stat-val {
+    font-size: 15pt !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    line-height: 1.1 !important;
+  }
+
+  .stat-lbl {
+    font-size: 7.5pt !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5pt !important;
+    color: #6b7280 !important;
+    margin-top: 3pt !important;
+  }
+
+  /* Column headers - transparent background, no splitter line, no 'Surah' label */
+  .plan-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding: 6pt 14pt 6pt 8pt !important;
+    border: none !important;
+    border-bottom: none !important;
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5pt !important;
+    background: transparent !important;
+    color: #6b7280 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .plan-header > :first-child {
+    width: 75pt !important;
+    flex-shrink: 0 !important;
+  }
+
+  .plan-header .header-surah {
+    flex: 1 1 auto !important;
+    padding: 0 10pt !important;
+  }
+
+  .plan-header .header-surah::before {
+    content: none !important;
+  }
+
+  .plan-header > :last-child {
+    width: 130pt !important;
+    flex-shrink: 0 !important;
+    text-align: right !important;
+  }
+
+  #planRows {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Day rows: Prevent splitting mid-way across page ends and shrink right margin */
+  .day-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 5.5pt 14pt 5.5pt 8pt !important;
+    border-bottom: 0.5pt solid #e5e7eb !important;
+    font-size: 9.5pt !important;
+    background-color: transparent !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    break-inside: avoid-page !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  .day-row:nth-child(even) {
+    background-color: #f9fafb !important;
+  }
+
+  .day-info {
+    width: 75pt !important;
+    min-width: 75pt !important;
+    flex-shrink: 0 !important;
+  }
+
+  .day-num {
+    font-weight: 600 !important;
+    font-size: 9.5pt !important;
+  }
+
+  .day-date {
+    font-size: 8pt !important;
+    color: #6b7280 !important;
+  }
+
+  .today-pill {
+    display: none !important;
+  }
+
+  .surah-info {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    padding: 0 10pt !important;
+  }
+
+  .surah-name {
+    font-weight: 600 !important;
+    font-size: 9.5pt !important;
+  }
+
+  .surah-meta {
+    font-size: 8pt !important;
+    color: #6b7280 !important;
+  }
+
+  .surah-arabic {
+    font-family: inherit;
+    font-size: 9.5pt !important;
+  }
+
+  .ayah-target {
+    width: 130pt !important;
+    min-width: 130pt !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 3pt !important;
+    text-align: right !important;
+  }
+
+  .ayah-badge {
+    border: 1pt solid #d1d5db !important;
+    border-radius: 4pt !important;
+    padding: 2pt 4pt !important;
+    font-weight: 600 !important;
+    font-size: 8pt !important;
+    background: #f9fafb !important;
+    white-space: nowrap !important;
+  }
+
+  .daily-stat {
+    display: inline-block !important;
+    border: 0.5pt solid #e5e7eb !important;
+    border-radius: 3pt !important;
+    padding: 1pt 3pt !important;
+    font-size: 7pt !important;
+    background: #ffffff !important;
+  }
+
+  /* Printed document footer */
+  .results-footer {
+    margin-top: 14pt !important;
+    padding-top: 8pt !important;
+    border-top: 0.5pt solid #e5e7eb !important;
+    font-size: 8pt !important;
+    color: #6b7280 !important;
+    text-align: center !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+}
+

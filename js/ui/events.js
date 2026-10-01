@@ -21,7 +21,7 @@ import { initStatTooltips } from './tooltips.js';
 import { showToast } from './toast.js';
 import { getNextRamadanStart, getEndRamadanPlan } from '../calendar/ramadan.js';
 import { generatePlan, clearPlan } from '../services/plan-service.js';
-import { downloadPlan } from '../services/export.js';
+import { downloadPlan, printPlan } from '../services/export.js';
 
 /**
  * Populates the starting Surah dropdown list from the SURAHS array.
@@ -258,6 +258,13 @@ function initUIEvents() {
   if (DOM.generatePlanBtn) {
     DOM.generatePlanBtn.addEventListener('click', () => {
       if (typeof generatePlan === 'function') generatePlan();
+    });
+  }
+
+  // Print / Save as PDF button
+  if (DOM.printBtn) {
+    DOM.printBtn.addEventListener('click', () => {
+      if (typeof printPlan === 'function') printPlan();
     });
   }
 
