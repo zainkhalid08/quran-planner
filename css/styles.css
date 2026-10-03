@@ -451,12 +451,19 @@ input#startAyah {
   outline-offset: 2px;
 }
 
+/* ── Reset Plan Action Button ── */
+.btn-reset-plan {
+  width: 100%;
+  flex: none;
+  margin-top: 10px;
+}
+
 /* ── Results Action Row (Print, Download & Reset) ── */
 .results-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .btn-download {

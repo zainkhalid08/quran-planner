@@ -134,6 +134,7 @@ function clearPlan() {
 
   if (DOM.results) DOM.results.style.display = 'none';
   if (DOM.resultsActions) DOM.resultsActions.style.display = 'none';
+  if (DOM.clearPlanBtn) DOM.clearPlanBtn.style.display = 'none';
   if (DOM.planRows) DOM.planRows.innerHTML = '';
   if (DOM.resultsFooter) DOM.resultsFooter.textContent = '';
   if (DOM.card) {

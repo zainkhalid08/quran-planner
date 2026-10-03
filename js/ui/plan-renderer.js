@@ -109,6 +109,7 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
   void DOM.results.offsetWidth;
   DOM.results.style.animation = '';
 
+  if (DOM.clearPlanBtn) DOM.clearPlanBtn.style.display = 'flex';
   if (DOM.resultsActions) DOM.resultsActions.style.display = 'flex';
 
   if (DOM.resultsFooter) {
