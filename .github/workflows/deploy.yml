@@ -30,32 +30,44 @@ jobs:
           node -e '
             const fs = require("fs");
             const path = require("path");
-            const crypto = require("crypto");
 
-            function getFileHash(filePath) {
-              if (!fs.existsSync(filePath)) return null;
-              const content = fs.readFileSync(filePath);
-              return crypto.createHash("md5").update(content).digest("hex").slice(0, 8);
+            // Use the first 8 characters of the commit SHA, or timestamp as fallback
+            const version = process.env.GITHUB_SHA ? process.env.GITHUB_SHA.slice(0, 8) : Date.now().toString(36);
+            console.log("Applying cache-busting version:", version);
+
+            // 1. Cache-bust scripts and stylesheets referenced in index.html
+            if (fs.existsSync("index.html")) {
+              let html = fs.readFileSync("index.html", "utf8");
+              html = html.replace(/(<script\s+[^>]*src=["\x27])(js\/[^"\x27\s?]+)(?:\?[^"\x27]*)?(["\x27][^>]*>)/gi, `$1$2?v=${version}$3`);
+              html = html.replace(/(<link\s+[^>]*href=["\x27])(css\/[^"\x27\s?]+)(?:\?[^"\x27]*)?(["\x27][^>]*>)/gi, `$1$2?v=${version}$3`);
+              fs.writeFileSync("index.html", html, "utf8");
+              console.log("Updated index.html asset references with ?v=" + version);
             }
 
+            // 2. Cache-bust all relative ES module imports across all JS files
+            function updateJsImports(dir) {
+              const entries = fs.readdirSync(dir, { withFileTypes: true });
+              for (const entry of entries) {
+                const fullPath = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                  updateJsImports(fullPath);
+                } else if (entry.isFile() && entry.name.endsWith(".js")) {
+                  let content = fs.readFileSync(fullPath, "utf8");
+                  const updated = content.replace(
+                    /(from\s+["\x27])(\.{1,2}\/[^"\x27\s?]+?\.js)(?:\?[^"\x27]*)?(["\x27])/g,
+                    `$1$2?v=${version}$3`
+                  );
+                  if (updated !== content) {
+                    fs.writeFileSync(fullPath, updated, "utf8");
+                  }
+                }
+              }
+            }
 
-            // 2. Cache-bust scripts in index.html based on individual file content
-            let html = fs.readFileSync("index.html", "utf8");
-            html = html.replace(/(<script\s+[^>]*src=["\x27])(js\/[^"\x27]+)(["\x27][^>]*>)/gi, (m, p, s, suf) => {
-              const cleanSrc = s.split("?")[0];
-              const hash = getFileHash(cleanSrc);
-              return hash ? `${p}${cleanSrc}?v=${hash}${suf}` : m;
-            });
-
-            // 3. Cache-bust stylesheets in index.html based on css file content (including updated styles.css)
-            html = html.replace(/(<link\s+[^>]*href=["\x27])(css\/[^"\x27]+)(["\x27][^>]*>)/gi, (m, p, s, suf) => {
-              const cleanHref = s.split("?")[0];
-              const hash = getFileHash(cleanHref);
-              return hash ? `${p}${cleanHref}?v=${hash}${suf}` : m;
-            });
-
-            fs.writeFileSync("index.html", html, "utf8");
-            console.log("Appended content-based hashes to all scripts and stylesheets in index.html");
+            if (fs.existsSync("js")) {
+              updateJsImports("js");
+              console.log("Updated all internal JS module imports with ?v=" + version);
+            }
           '
 
       - name: Setup Pages
