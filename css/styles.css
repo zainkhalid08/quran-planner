@@ -568,6 +568,10 @@ input#startAyah {
   display: block;
 }
 
+#resultsExportClone .stats-actions {
+  display: none !important;
+}
+
 .results-title {
   font-size: 1.45rem;
   font-weight: 800;
@@ -590,41 +594,72 @@ input#startAyah {
   border-top: 1px dashed var(--border);
 }
 
-/* ── Plan Summary Stats ── */
+/* ── Plan Summary Stats (Flat Typography-First) ── */
 .stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0 14px;
+  margin-bottom: 12px;
 }
 
 .stat {
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius-md);
-  padding: 14px 10px;
+  flex: 1;
   text-align: center;
-  box-shadow: var(--shadow-subtle);
-  transition: transform var(--transition-fast);
+  padding: 4px 16px;
 }
 
-.stat:hover {
-  transform: translateY(-1px);
+.stat:first-child {
+  border-right: 1px solid var(--border);
 }
 
 .stat-val {
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: var(--accent);
-  line-height: 1;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .stat-lbl {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--muted);
-  margin-top: 5px;
+  margin-top: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Stats Actions (Pill Buttons) ── */
+.stats-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.pill-pdf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+.pill-pdf svg {
+  flex-shrink: 0;
+}
+
+.pill-pdf svg path[fill] {
+  fill: var(--input-bg);
+  transition: fill var(--transition-fast);
+}
+
+.pill-pdf:hover svg path[fill] {
+  fill: var(--accent-bg);
 }
 
 /* ── Plan Day-by-Day Table ── */
@@ -1000,20 +1035,24 @@ html.dark .toast:hover {
   }
 
   .stats {
-    gap: 6px;
+    padding: 4px 0 10px;
+    margin-bottom: 10px;
+  }
+
+  .stats-actions {
     margin-bottom: 16px;
   }
 
   .stat {
-    padding: 10px 6px;
+    padding: 2px 10px;
   }
 
   .stat-val {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
   }
 
   .stat-lbl {
-    font-size: 0.67rem;
+    font-size: 0.65rem;
   }
 
   .plan-header {
@@ -1222,6 +1261,7 @@ html.dark .toast:hover {
   .btn-download,
   .results-actions,
   #resultsActions,
+  .stats-actions,
   .toast-container,
   .tooltip,
   button,
@@ -1286,36 +1326,39 @@ html.dark .toast:hover {
     text-align: center !important;
   }
 
-  /* Summary statistics: each stat in its own distinct container matching the website design */
+  /* Summary statistics: clean typography-first readout matching website design */
   .stats {
     display: flex !important;
     flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: stretch !important;
-    gap: 8pt !important;
+    justify-content: center !important;
+    align-items: center !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    padding: 0 14pt 0 8pt !important;
-    margin: 0 0 14pt 0 !important;
+    padding: 2pt 0 10pt 0 !important;
+    margin: 0 0 10pt 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
   .stat {
     flex: 1 1 0 !important;
-    background: #f9fafb !important;
-    border: 1pt solid #e5e7eb !important;
-    border-radius: 6pt !important;
-    padding: 8pt 6pt !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 2pt 12pt !important;
     text-align: center !important;
     box-sizing: border-box !important;
   }
 
+  .stat:first-child {
+    border-right: 1pt solid #e5e7eb !important;
+  }
+
   .stat-val {
-    font-size: 15pt !important;
+    font-size: 16pt !important;
     font-weight: 800 !important;
     color: #000000 !important;
     line-height: 1.1 !important;
@@ -1327,6 +1370,7 @@ html.dark .toast:hover {
     letter-spacing: 0.5pt !important;
     color: #6b7280 !important;
     margin-top: 3pt !important;
+    font-weight: 700 !important;
   }
 
   /* Column headers - transparent background, no splitter line, no 'Surah' label */

@@ -66,7 +66,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=1.8" />
+  <link rel="stylesheet" href="css/styles.css?v=1.9" />
 </head>
 
 <body>
@@ -157,15 +157,6 @@
 
     <!-- Actions -->
     <div class="results-actions" id="resultsActions" style="display: none;">
-      <!-- <button class="btn-download" id="printBtn" title="Print or save as a multi-page vector PDF document" aria-label="Print or save as PDF">
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M4.5 4.5V1.5H10.5V4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2.5 5.5H12.5C13.05 5.5 13.5 5.95 13.5 6.5V10.5H1.5V6.5C1.5 5.95 1.95 5.5 2.5 5.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4 9.5H11V13.5H4V9.5Z" fill="var(--card, #fff)" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M5.5 11.5H9.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
-        </svg>
-        Get PDF
-      </button> -->
       <button class="btn-download" id="downloadBtn" style="display: none;">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M7.5 10.5L3.5 6.5H6V1.5H9V6.5H11.5L7.5 10.5Z" fill="currentColor" />
@@ -194,6 +185,19 @@
         <div class="stat-val" id="statAvg">—</div>
         <div class="stat-lbl">Avg Ayahs / Day</div>
       </div>
+    </div>
+
+    <!-- Actions under Stats -->
+    <div class="stats-actions">
+      <button type="button" class="pill pill-pdf" id="printBtn" title="Print or save as a multi-page vector PDF document" aria-label="Print or save as PDF">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4.5 4.5V1.5H10.5V4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M2.5 5.5H12.5C13.05 5.5 13.5 5.95 13.5 6.5V10.5H1.5V6.5C1.5 5.95 1.95 5.5 2.5 5.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M4 9.5H11V13.5H4V9.5Z" fill="var(--input-bg, #fff)" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M5.5 11.5H9.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+        </svg>
+        Get PDF
+      </button>
     </div>
 
     <!-- Column headers -->
