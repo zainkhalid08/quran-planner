@@ -650,15 +650,18 @@ input#startAyah {
   font-weight: 700;
 }
 
-/* ── Get PDF Action Button under Stats ── */
+/* ── Get PDF & Calendar Action Buttons under Stats ── */
 .stats-actions {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.pill-pdf {
+.pill-pdf,
+.pill-calendar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -669,7 +672,8 @@ input#startAyah {
   letter-spacing: 0.01em;
 }
 
-.pill-pdf svg {
+.pill-pdf svg,
+.pill-calendar svg {
   flex-shrink: 0;
 }
 
@@ -1079,9 +1083,11 @@ html.dark .toast:hover {
 
   .stats-actions {
     margin-bottom: 16px;
+    gap: 8px;
   }
 
-  .pill-pdf {
+  .pill-pdf,
+  .pill-calendar {
     padding: 5px 12px;
     font-size: 0.75rem;
   }

@@ -26,6 +26,7 @@ export const DOM = {
   endRamadanPill: document.getElementById('endRamadanPill'),
   ramadanNote: document.getElementById('ramadanNote'),
   printBtn: document.getElementById('printBtn'),
+  calendarBtn: document.getElementById('calendarBtn'),
   downloadBtn: document.getElementById('downloadBtn'),
   clearPlanBtn: document.getElementById('clearPlanBtn'),
   generatePlanBtn: document.getElementById('generatePlanBtn'),

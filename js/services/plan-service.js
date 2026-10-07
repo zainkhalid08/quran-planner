@@ -22,6 +22,11 @@ import { renderPlan } from '../ui/plan-renderer.js';
 import { updateAyahMax, clearRamadanNote } from '../ui/events.js';
 
 /**
+ * Tracks the most recently calculated plan in memory.
+ */
+let currentPlan = null;
+
+/**
  * Validates inputs, invokes calculatePlan from algo.js, saves the plan, and renders it.
  *
  * @param {string} [customStartDate] - Optional ISO date string for custom start date.
@@ -94,6 +99,15 @@ function generatePlan(customStartDate, skipScroll) {
     planStartDate
   });
 
+  currentPlan = {
+    days,
+    startSurahIdx,
+    startAyah,
+    planStartDate,
+    remaining: planResult.remainingAyahs ?? planResult.remaining,
+    schedule: planResult.schedule
+  };
+
   if (typeof renderPlan === 'function') {
     renderPlan({
       days,
@@ -109,10 +123,77 @@ function generatePlan(customStartDate, skipScroll) {
 }
 
 /**
+ * Returns the currently active plan data, or recomputes it from Storage or live form inputs if available.
+ * @returns {Object|null}
+ */
+function getCurrentPlan() {
+  if (currentPlan && currentPlan.schedule && currentPlan.schedule.length) {
+    return currentPlan;
+  }
+
+  // Fallback 1: Recompute from persistent Storage
+  const saved = Storage.getItem(Storage.KEYS.PLAN);
+  if (saved && saved.days) {
+    const planStartDate = saved.startDate ? new Date(saved.startDate) : new Date();
+    planStartDate.setHours(0, 0, 0, 0);
+
+    const planResult = calculatePlan({
+      days: saved.days,
+      startSurahIdx: saved.startSurahIdx || 0,
+      startAyah: saved.startAyah || 1,
+      planStartDate
+    });
+
+    currentPlan = {
+      days: saved.days,
+      startSurahIdx: saved.startSurahIdx || 0,
+      startAyah: saved.startAyah || 1,
+      planStartDate,
+      remaining: planResult.remainingAyahs ?? planResult.remaining,
+      schedule: planResult.schedule
+    };
+
+    return currentPlan;
+  }
+
+  // Fallback 2: Recompute from live DOM form inputs
+  if (DOM.days && DOM.days.value) {
+    const days = parseInt(DOM.days.value);
+    if (days > 0) {
+      const startSurahIdx = DOM.startSurah ? parseInt(DOM.startSurah.value) || 0 : 0;
+      const startAyah = DOM.startAyah && DOM.startAyah.value ? parseInt(DOM.startAyah.value) || 1 : 1;
+      const planStartDate = new Date();
+      planStartDate.setHours(0, 0, 0, 0);
+
+      const planResult = calculatePlan({
+        days,
+        startSurahIdx,
+        startAyah,
+        planStartDate
+      });
+
+      currentPlan = {
+        days,
+        startSurahIdx,
+        startAyah,
+        planStartDate,
+        remaining: planResult.remainingAyahs ?? planResult.remaining,
+        schedule: planResult.schedule
+      };
+
+      return currentPlan;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Clears any active plan, removes saved data from storage,
  * and resets inputs back to their initial default state.
  */
 function clearPlan() {
+  currentPlan = null;
   Storage.removeItem(Storage.KEYS.PLAN);
 
   // Reset days input and all pill selections
@@ -173,8 +254,9 @@ function loadSavedPlan() {
 const planService = {
   generatePlan,
   clearPlan,
-  loadSavedPlan
+  loadSavedPlan,
+  getCurrentPlan
 };
 
-export { generatePlan, clearPlan, loadSavedPlan, planService };
+export { generatePlan, clearPlan, loadSavedPlan, getCurrentPlan, planService };
 

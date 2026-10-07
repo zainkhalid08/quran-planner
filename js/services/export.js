@@ -13,8 +13,8 @@
  * - `exportService`: Namespace object grouping export capabilities.
  */
 import { DOM } from '../ui/dom.js';
-
 import { showToast } from '../ui/toast.js';
+import { getCurrentPlan } from './plan-service.js';
 
 /**
  * Renders the plan card onto a canvas using html2canvas and triggers a PNG file download.
@@ -127,21 +127,212 @@ async function downloadPlan(options = {}) {
 }
 
 /**
+ * Flag preventing re-entrant or duplicate print dialog triggers.
+ */
+let isPrinting = false;
+
+/**
  * Triggers the browser's native print / save as PDF dialog for the generated reading plan.
  * @returns {void}
  */
 function printPlan() {
+  if (isPrinting) return;
   if (!DOM.results || DOM.results.style.display === 'none') {
     showToast('Please generate a plan first to print or save as PDF.', 'warning');
     return;
   }
-  window.print();
+  isPrinting = true;
+  try {
+    window.print();
+  } finally {
+    setTimeout(() => {
+      isPrinting = false;
+    }, 600);
+  }
+}
+
+/**
+ * Converts a Date object or date string into YYYYMMDD string for iCalendar all-day events.
+ * @param {Date|string} date
+ * @returns {string}
+ */
+function formatIcsDate(date) {
+  const d = date instanceof Date ? date : new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}${m}${day}`;
+}
+
+/**
+ * Builds standard RFC 5545 iCalendar content string for the schedule.
+ * @param {Array<Object>} schedule
+ * @param {number} totalDays
+ * @returns {string}
+ */
+function generateIcs(schedule, totalDays) {
+  const now = new Date();
+  const dtstamp = now.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Quran Planner//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Quran Reading Plan'
+  ];
+
+  for (const item of schedule) {
+    const dtStart = formatIcsDate(item.date);
+    const itemDate = item.date instanceof Date ? item.date : new Date(item.date);
+    const nextDay = new Date(itemDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const dtEnd = formatIcsDate(nextDay);
+
+    const surahName = item.surah?.name || 'Surah';
+    const surahNumber = item.surah?.number || '';
+    const surahArabic = item.surah?.arabic ? ` (${item.surah.arabic})` : '';
+    const targetAyah = item.targetAyah || 1;
+    const dayCount = item.dayAyahsCount || 0;
+
+    const summary = `Day ${item.day}: Read till Surah ${surahName} ${targetAyah}`;
+    const description = `Quran Reading Plan - Day ${item.day} of ${totalDays}\\nGoal: Read till Surah ${surahNumber}. ${surahName}${surahArabic} Ayah ${targetAyah}.\\nDaily reading: ${dayCount} ayahs.`;
+
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:quran-plan-d${item.day}-${dtStart}@quranplanner.org`,
+      `DTSTAMP:${dtstamp}`,
+      `DTSTART;VALUE=DATE:${dtStart}`,
+      `DTEND;VALUE=DATE:${dtEnd}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      'STATUS:CONFIRMED',
+      'TRANSP:TRANSPARENT',
+      'END:VEVENT'
+    );
+  }
+
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+/**
+ * Flag preventing duplicate calendar export triggers.
+ */
+let isExportingCalendar = false;
+
+/**
+ * Generates an iCalendar (.ics) file for the active schedule and triggers a file download.
+ * @returns {void}
+ */
+function downloadCalendarPlan() {
+  if (isExportingCalendar) return;
+  const calendarBtn = DOM.calendarBtn || document.getElementById('calendarBtn');
+  const plan = typeof getCurrentPlan === 'function' ? getCurrentPlan() : null;
+
+  if (!plan || !plan.schedule || !plan.schedule.length) {
+    if (typeof showToast === 'function') {
+      showToast('Please generate a plan first to export to calendar.', 'warning');
+    }
+    return;
+  }
+
+  isExportingCalendar = true;
+  let originalHtml = '';
+  if (calendarBtn) {
+    originalHtml = calendarBtn.innerHTML;
+    calendarBtn.disabled = true;
+    calendarBtn.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"
+           style="animation:spin 0.8s linear infinite" aria-hidden="true">
+        <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.5"
+                stroke-dasharray="22" stroke-dashoffset="10"/>
+      </svg>
+      Exporting…`;
+  }
+
+  try {
+    const icsData = generateIcs(plan.schedule, plan.days);
+    const filename = `quran-plan-${plan.days}days.ics`;
+
+    let downloaded = false;
+
+    // Primary: Blob URL download
+    try {
+      const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+      if (typeof window.navigator !== 'undefined' && typeof window.navigator.msSaveOrOpenBlob === 'function') {
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+        downloaded = true;
+      } else {
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = objectUrl;
+        link.setAttribute('download', filename);
+        link.setAttribute('target', '_blank');
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          if (link.parentNode) link.parentNode.removeChild(link);
+          URL.revokeObjectURL(objectUrl);
+        }, 1200);
+        downloaded = true;
+      }
+    } catch (blobErr) {
+      console.warn('Blob download failed, trying data URI fallback:', blobErr);
+    }
+
+    // Fallback: Data URI download if Blob was blocked
+    if (!downloaded) {
+      const dataUri = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsData);
+      const link = document.createElement('a');
+      link.style.display = 'none';
+      link.href = dataUri;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        if (link.parentNode) link.parentNode.removeChild(link);
+      }, 500);
+    }
+
+    if (typeof showToast === 'function') {
+      showToast('Calendar schedule (.ics) downloaded. Open it to sync with your calendar.', 'info');
+    }
+
+    if (calendarBtn) {
+      calendarBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <polyline points="2.5 8 6 11.5 12.5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Downloaded!`;
+      setTimeout(() => {
+        isExportingCalendar = false;
+        calendarBtn.disabled = false;
+        calendarBtn.innerHTML = originalHtml;
+      }, 2200);
+    } else {
+      isExportingCalendar = false;
+    }
+  } catch (err) {
+    isExportingCalendar = false;
+    console.error('Calendar export failed:', err);
+    if (typeof showToast === 'function') {
+      showToast('Failed to export calendar. Please try again.', 'error');
+    }
+    if (calendarBtn) {
+      calendarBtn.disabled = false;
+      calendarBtn.innerHTML = originalHtml;
+    }
+  }
 }
 
 const exportService = {
   downloadPlan,
-  printPlan
+  printPlan,
+  downloadCalendarPlan
 };
 
-export { downloadPlan, printPlan, exportService };
+export { downloadPlan, printPlan, downloadCalendarPlan, exportService };
 
