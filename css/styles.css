@@ -712,12 +712,6 @@ input#startAyah {
   border-radius: var(--radius-md);
   padding: 12px 14px;
   margin-bottom: 6px;
-  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-}
-
-.day-row:hover {
-  border-color: var(--accent-border);
-  background: var(--accent-soft);
 }
 
 .day-row.today {
