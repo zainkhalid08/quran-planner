@@ -12,9 +12,13 @@
 
 import { initUIEvents } from './ui/events.js';
 import { loadSavedPlan } from './services/plan-service.js';
+import { loadPlanFromUrl } from './services/share-service.js';
 
 // Initialize UI events, forms, theme toggles, and tooltips
 initUIEvents();
 
-// Restore any previously generated plan from persistent storage
-loadSavedPlan();
+// If URL has a shared plan token, render it; otherwise restore previously saved plan
+const loadedFromUrl = loadPlanFromUrl();
+if (!loadedFromUrl) {
+  loadSavedPlan();
+}

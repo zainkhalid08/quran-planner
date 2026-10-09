@@ -132,7 +132,7 @@ function getCurrentPlan() {
   }
 
   // Fallback 1: Recompute from persistent Storage
-  const saved = Storage.getItem(Storage.KEYS.PLAN);
+  const saved = Storage.getJSON(Storage.KEYS.PLAN);
   if (saved && saved.days) {
     const planStartDate = saved.startDate ? new Date(saved.startDate) : new Date();
     planStartDate.setHours(0, 0, 0, 0);

@@ -650,7 +650,7 @@ input#startAyah {
   font-weight: 700;
 }
 
-/* ── Get PDF & Calendar Action Buttons under Stats ── */
+/* ── Get PDF, Calendar & Share Action Buttons under Stats ── */
 .stats-actions {
   display: flex;
   justify-content: center;
@@ -661,7 +661,8 @@ input#startAyah {
 }
 
 .pill-pdf,
-.pill-calendar {
+.pill-calendar,
+.pill-share {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -673,7 +674,8 @@ input#startAyah {
 }
 
 .pill-pdf svg,
-.pill-calendar svg {
+.pill-calendar svg,
+.pill-share svg {
   flex-shrink: 0;
 }
 
@@ -1087,7 +1089,8 @@ html.dark .toast:hover {
   }
 
   .pill-pdf,
-  .pill-calendar {
+  .pill-calendar,
+  .pill-share {
     padding: 5px 12px;
     font-size: 0.75rem;
   }
