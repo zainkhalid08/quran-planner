@@ -18,7 +18,8 @@ const Storage = {
 
   KEYS: {
     PLAN: 'quran_planner_saved_plan',
-    THEME: 'quran_planner_theme_preference'
+    THEME: 'quran_planner_theme_preference',
+    SKIP_CALENDAR_TIP: 'quran_planner_skip_calendar_tip'
   },
 
   /**

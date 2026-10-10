@@ -20,9 +20,11 @@ import { initTheme } from './theme.js';
 import { initStatTooltips } from './tooltips.js';
 import { showToast } from './toast.js';
 import { getNextRamadanStart, getEndRamadanPlan } from '../calendar/ramadan.js';
-import { generatePlan, clearPlan } from '../services/plan-service.js';
+import { generatePlan, clearPlan, getCurrentPlan } from '../services/plan-service.js';
 import { downloadPlan, printPlan, downloadCalendarPlan } from '../services/export.js';
 import { sharePlan } from '../services/share-service.js';
+import { Storage } from '../services/storage.js';
+import { initCalendarModal, openCalendarModal } from './calendar-modal.js';
 
 /**
  * Populates the starting Surah dropdown list from the SURAHS array.
@@ -102,6 +104,7 @@ function initUIEvents() {
   initDateBounds();
   initTheme();
   initStatTooltips();
+  initCalendarModal();
 
   // Fixed-duration pills (15 days / 1 month / etc.)
   document.querySelectorAll('.pill[data-days]').forEach(pill => {
@@ -272,7 +275,19 @@ function initUIEvents() {
   // Add to Calendar action button
   if (DOM.calendarBtn) {
     DOM.calendarBtn.addEventListener('click', () => {
-      if (typeof downloadCalendarPlan === 'function') downloadCalendarPlan();
+      const skipTip = Storage.getItem(Storage.KEYS.SKIP_CALENDAR_TIP) === 'true';
+      if (skipTip) {
+        if (typeof downloadCalendarPlan === 'function') downloadCalendarPlan();
+        return;
+      }
+
+      const plan = typeof getCurrentPlan === 'function' ? getCurrentPlan() : null;
+      if (!plan || !plan.schedule || !plan.schedule.length) {
+        if (typeof downloadCalendarPlan === 'function') downloadCalendarPlan();
+        return;
+      }
+
+      openCalendarModal(plan);
     });
   }
 

@@ -222,7 +222,7 @@
           <circle cx="7.5" cy="11" r="0.75" fill="currentColor" />
           <circle cx="10" cy="11" r="0.75" fill="currentColor" />
         </svg>
-        Add to Calendar (.ics)
+        Add to Calendar
       </button>
       <button type="button" class="pill pill-share" id="shareBtn" title="Share this Quran reading plan with friends or family" aria-label="Share Plan">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -233,7 +233,7 @@
           <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
         </svg>
 
-        Share Plan
+        Share
       </button>
     </div>
 
@@ -249,6 +249,97 @@
 
     <div class="results-footer" id="resultsFooter"></div>
 
+  </div>
+
+  <!-- Calendar Export Guidance Modal -->
+  <div class="modal-backdrop" id="calendarModal" role="dialog" aria-modal="true" aria-labelledby="calendarModalTitle" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M4.5 1.5V3.5M10.5 1.5V3.5M1.5 5.5H13.5M2.5 2.5H12.5C13.0523 2.5 13.5 2.94772 13.5 3.5V12.5C13.0523 13.0523 13.0523 13.5 12.5 13.5H2.5C1.94772 13.5 1.5 13.0523 1.5 12.5V3.5C1.5 2.94772 1.94772 2.5 2.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="5" cy="8.5" r="0.75" fill="currentColor" />
+            <circle cx="7.5" cy="8.5" r="0.75" fill="currentColor" />
+            <circle cx="10" cy="8.5" r="0.75" fill="currentColor" />
+            <circle cx="5" cy="11" r="0.75" fill="currentColor" />
+            <circle cx="7.5" cy="11" r="0.75" fill="currentColor" />
+            <circle cx="10" cy="11" r="0.75" fill="currentColor" />
+          </svg>
+          <h2 class="modal-title" id="calendarModalTitle">Add to Calendar</h2>
+        </div>
+        <button type="button" class="modal-close-btn" id="calendarModalCloseBtn" aria-label="Close dialog" title="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <line x1="3" y1="3" x2="11" y2="11" />
+            <line x1="11" y1="3" x2="3" y2="11" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-lead">This schedule contains <strong id="calendarModalDaysCount">—</strong> daily reading events.</p>
+
+        <div class="modal-tip-box">
+          <div class="modal-tip-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+            </svg>
+            Tip: Import into a new calendar
+          </div>
+          <p class="modal-tip-desc">
+            We recommend creating a new calendar for this schedule. <br>If you ever need to remove it, you can delete the entire calendar instantly, rather than deleting each event one by one.
+          </p>
+        </div>
+
+        <!-- Platform Tabs -->
+        <div class="modal-tabs" role="tablist" aria-label="Calendar instructions by app">
+          <button type="button" class="modal-tab active" role="tab" aria-selected="true" data-tab="google" id="tabGoogle">Google Calendar</button>
+          <button type="button" class="modal-tab" role="tab" aria-selected="false" data-tab="apple" id="tabApple">Apple Calendar</button>
+          <button type="button" class="modal-tab" role="tab" aria-selected="false" data-tab="outlook" id="tabOutlook">Outlook</button>
+        </div>
+
+        <!-- Tab Panels -->
+        <div class="modal-panel active" id="panelGoogle" role="tabpanel" aria-labelledby="tabGoogle">
+          <ol class="modal-steps">
+            <li>Download the <code>.ics</code> file using the button below.</li>
+            <li>In Google Calendar, go to <strong>Settings ⚙️ → Add calendar → Create new calendar</strong> (e.g. name it <em>Quran Plan</em>).</li>
+            <li>Go to <strong>Import & export → Import</strong>, select the downloaded file, and choose your <em>Quran Plan</em> calendar.</li>
+          </ol>
+        </div>
+
+        <div class="modal-panel" id="panelApple" role="tabpanel" aria-labelledby="tabApple" style="display: none;">
+          <ol class="modal-steps">
+            <li>Download and open the <code>.ics</code> file on your Mac or iPhone.</li>
+            <li>When prompted <strong>"Add to:"</strong>, select <strong>New Calendar</strong> instead of your personal calendar.</li>
+            <li>You can now toggle or delete all days anytime by right-clicking that calendar.</li>
+          </ol>
+        </div>
+
+        <div class="modal-panel" id="panelOutlook" role="tabpanel" aria-labelledby="tabOutlook" style="display: none;">
+          <ol class="modal-steps">
+            <li>Download the <code>.ics</code> file below.</li>
+            <li>In Outlook Calendar, click <strong>Add calendar → Upload from file</strong>.</li>
+            <li>Choose your file and select <strong>New calendar</strong> as the destination.</li>
+          </ol>
+        </div>
+
+        <!-- Don't show again checkbox -->
+        <label class="modal-dont-show-label">
+          <input type="checkbox" id="calendarModalDontShow" />
+          <span>Don't show this tip again</span>
+        </label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="modal-btn modal-btn-secondary" id="calendarModalCancelBtn">Cancel</button>
+        <button type="button" class="modal-btn modal-btn-primary" id="calendarModalDownloadBtn">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M7.5 10.5L3.5 6.5H6V1.5H9V6.5H11.5L7.5 10.5Z" fill="currentColor" />
+            <path d="M2 12.5H13V13.5H2V12.5Z" fill="currentColor" />
+          </svg>
+          Download .ICS File
+        </button>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
