@@ -1709,10 +1709,7 @@ html.dark .toast:hover {
   }
 
   .results-subtitle {
-    font-size: 10pt !important;
-    color: #4b5563 !important;
-    margin-top: 2pt !important;
-    text-align: center !important;
+    display: none !important;
   }
 
   /* Summary statistics: clean inline icons row with titles matching website design */
