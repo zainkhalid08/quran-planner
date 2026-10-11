@@ -133,6 +133,7 @@ let isPrinting = false;
 
 /**
  * Triggers the browser's native print / save as PDF dialog for the generated reading plan.
+ * Temporarily sets document.title to "quranplanner.org" so browsers default the saved PDF filename to quranplanner.org.pdf.
  * @returns {void}
  */
 function printPlan() {
@@ -142,12 +143,28 @@ function printPlan() {
     return;
   }
   isPrinting = true;
+  const originalTitle = document.title;
+  let hasRestored = false;
+
+  const restoreTitle = () => {
+    if (hasRestored) return;
+    hasRestored = true;
+    document.title = originalTitle;
+    isPrinting = false;
+    window.removeEventListener('afterprint', restoreTitle);
+  };
+
+  window.addEventListener('afterprint', restoreTitle, { once: true });
+
   try {
+    document.title = 'quranplanner.org';
     window.print();
+  } catch (err) {
+    console.error('Print failed:', err);
+    restoreTitle();
   } finally {
-    setTimeout(() => {
-      isPrinting = false;
-    }, 600);
+    // Fallback restoration if afterprint does not fire
+    setTimeout(restoreTitle, 1000);
   }
 }
 
