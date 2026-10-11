@@ -1047,9 +1047,8 @@ html.dark .modal-card {
 }
 
 #calendarModalDateRange {
-  color: var(--muted);
+  color: var(--text-secondary);
   font-weight: 500;
-  font-size: 0.84rem;
   margin-left: 2px;
 }
 

@@ -62,7 +62,7 @@ export function openCalendarModal(plan) {
       if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
         const startStr = modalDateFormatter.format(startDate);
         const endStr = modalDateFormatter.format(endDate);
-        DOM.calendarModalDateRange.textContent = `(${startStr} – ${endStr})`;
+        DOM.calendarModalDateRange.textContent = `from ${startStr} to ${endStr}`;
       } else {
         DOM.calendarModalDateRange.textContent = '';
       }
