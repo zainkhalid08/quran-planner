@@ -177,7 +177,7 @@ header {
 }
 
 header h1 {
-  font-size: 2.5rem;
+  font-size: 2.85rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--text);
@@ -579,10 +579,10 @@ input#startAyah {
 }
 
 .results-title {
-  font-size: 1.45rem;
+  font-size: 1.65rem;
   font-weight: 800;
   color: var(--text);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .results-subtitle {
@@ -1371,8 +1371,8 @@ html.dark .toast:hover {
   }
 
   header h1 {
-    font-size: 2.1rem;
-    letter-spacing: -0.02em;
+    font-size: 2.35rem;
+    letter-spacing: -0.025em;
   }
 
   header p {
@@ -1503,7 +1503,7 @@ html.dark .toast:hover {
   }
 
   header h1 {
-    font-size: 1.85rem;
+    font-size: 2.05rem;
   }
 
   .card {
@@ -1687,9 +1687,9 @@ html.dark .toast:hover {
   }
 
   .results-title {
-    font-size: 20pt !important;
+    font-size: 24pt !important;
     font-weight: 800 !important;
-    letter-spacing: -0.5pt !important;
+    letter-spacing: -0.6pt !important;
     color: #000000 !important;
     text-align: center !important;
   }

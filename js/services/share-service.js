@@ -169,7 +169,7 @@ export async function sharePlan() {
       const copied = await copyToClipboard(shareUrl);
       if (copied) {
         if (typeof showToast === 'function') {
-          showToast('Link copied to clipboard! Share it with friends or family.', 'info');
+          showToast('Link copied to clipboard!', 'info');
         }
         showCopiedButtonState(shareBtn, originalHtml);
       } else {
