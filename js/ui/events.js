@@ -25,6 +25,7 @@ import { downloadPlan, printPlan, downloadCalendarPlan } from '../services/expor
 import { sharePlan } from '../services/share-service.js';
 import { Storage } from '../services/storage.js';
 import { initCalendarModal, openCalendarModal } from './calendar-modal.js';
+import { getOrdinal, showBeforeRamadanTip, showEndRamadanTip, clearInfoBox } from './info-box.js';
 
 /**
  * Populates the starting Surah dropdown list from the SURAHS array.
@@ -70,29 +71,10 @@ function initDateBounds() {
 }
 
 /**
- * Returns ordinal string for a number (e.g. 1st, 2nd, 3rd, 8th).
- * @param {number} n
- * @returns {string}
- */
-function getOrdinal(n) {
-  const mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
-  switch (n % 10) {
-    case 1: return `${n}st`;
-    case 2: return `${n}nd`;
-    case 3: return `${n}rd`;
-    default: return `${n}th`;
-  }
-}
-
-/**
  * Hides and clears the Ramadan informative note container.
  */
 function clearRamadanNote() {
-  if (DOM && DOM.ramadanNote) {
-    DOM.ramadanNote.style.display = 'none';
-    DOM.ramadanNote.innerHTML = '';
-  }
+  clearInfoBox(DOM.ramadanNote);
 }
 
 /**
@@ -133,35 +115,7 @@ function initUIEvents() {
     document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
     DOM.ramadanPill.classList.add('active');
 
-    const finishDate = new Date(ramadanStart);
-    finishDate.setDate(finishDate.getDate() - 1);
-
-    const startDayOrdinal = getOrdinal(ramadanStart.getDate());
-    const startMonth = ramadanStart.toLocaleDateString('en-GB', { month: 'short' });
-    const startYear = ramadanStart.getFullYear();
-    const dateStr = `${startDayOrdinal} ${startMonth} ${startYear}`;
-
-    let finishDateStr = getOrdinal(finishDate.getDate());
-    if (finishDate.getMonth() !== ramadanStart.getMonth() || finishDate.getFullYear() !== ramadanStart.getFullYear()) {
-      const finishMonth = finishDate.toLocaleDateString('en-GB', { month: 'short' });
-      const finishYear = finishDate.getFullYear() !== startYear ? ` ${finishDate.getFullYear()}` : '';
-      finishDateStr += ` ${finishMonth}${finishYear}`;
-    }
-
-    DOM.ramadanNote.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 1.5C4.19 1.5 1.5 4.19 1.5 7.5C1.5 10.81 4.19 13.5 7.5 13.5C10.81 13.5 13.5 10.81 13.5 7.5C13.5 4.19 10.81 1.5 7.5 1.5Z" stroke="currentColor" stroke-width="1.3"/>
-        <path d="M7.5 4.75V7.75L9.5 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-      </svg>
-      <span class="pill-note-text"><strong>Plan completes 1 day before Ramadan</strong> <br> Ramadan starts around ${dateStr}, plan ends on ${finishDateStr}. Actual start depends on moon sighting and may shift by a day or more.</span>
-      <button type="button" class="pill-note-close" aria-label="Close notice" title="Close">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-          <line x1="3" y1="3" x2="11" y2="11"/>
-          <line x1="11" y1="3" x2="3" y2="11"/>
-        </svg>
-      </button>
-    `;
-    DOM.ramadanNote.style.display = 'flex';
+    showBeforeRamadanTip(ramadanStart);
   });
 
   // Dynamic "End Ramadan" pill
@@ -178,31 +132,14 @@ function initUIEvents() {
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
       DOM.endRamadanPill.classList.add('active');
 
-      const endDateStr = planInfo.ramadanEnd.toLocaleDateString('en-GB', {
-        day: 'numeric', month: 'long', year: 'numeric'
-      });
-
-      DOM.ramadanNote.innerHTML = `
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7.5 1.5C4.19 1.5 1.5 4.19 1.5 7.5C1.5 10.81 4.19 13.5 7.5 13.5C10.81 13.5 13.5 10.81 13.5 7.5C13.5 4.19 10.81 1.5 7.5 1.5Z" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M7.5 4.75V7.75L9.5 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
-        <span class="pill-note-text"><strong>Plan completes by 29th of Ramadan</strong> <br>That is around ${endDateStr}. Actual dates depend on moon sighting and may shift by a day or more.</span>
-        <button type="button" class="pill-note-close" aria-label="Close notice" title="Close">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-            <line x1="3" y1="3" x2="11" y2="11"/>
-            <line x1="11" y1="3" x2="3" y2="11"/>
-          </svg>
-        </button>
-      `;
-      DOM.ramadanNote.style.display = 'flex';
+      showEndRamadanTip(planInfo);
     });
   }
 
   // Dismiss Ramadan note on close button click
   if (DOM.ramadanNote) {
     DOM.ramadanNote.addEventListener('click', event => {
-      if (event.target.closest('.pill-note-close')) {
+      if (event.target.closest('.info-box-close, .tip-box-close, .pill-note-close')) {
         clearRamadanNote();
       }
     });

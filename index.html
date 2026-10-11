@@ -103,7 +103,7 @@
   <header role="banner">
     <!-- <div class="header-icon" aria-hidden="true">🌙</div> -->
     <h1>quranplanner.org</h1>
-    <p>Set a target — get a plan day-by-day</p>
+    <p>Choose your finish date. Get balanced daily readings.</p>
   </header>
 
   <!-- Form card -->
@@ -130,7 +130,7 @@
         <button type="button" class="pill" id="ramadanPill">Before Ramadan</button>
         <button type="button" class="pill" id="endRamadanPill">End Ramadan</button>
       </div>
-      <div class="pill-note" id="ramadanNote"></div>
+      <div class="info-box" id="ramadanNote" role="status" aria-live="polite" style="display: none;"></div>
     </div>
 
     <div class="field">
@@ -276,50 +276,33 @@
       </div>
 
       <div class="modal-body">
-        <p class="modal-lead">This schedule contains <strong id="calendarModalDaysCount">—</strong> daily reading events.</p>
+        <p class="modal-lead" id="calendarModalLead">
+          Adds <strong id="calendarModalDaysCount">—</strong> daily events <span id="calendarModalDateRange"></span>
+        </p>
 
-        <div class="modal-tip-box">
-          <div class="modal-tip-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-            </svg>
-            Tip: Import into a new calendar
+        <ol class="modal-steps-flow">
+          <li>
+            <strong>Download the file</strong>
+            <span>This will download the <code>.ics</code> calendar file.</span>
+          </li>
+          <li>
+            <strong>Open to import</strong>
+            <span>Open the downloaded file to add the schedule to your calendar app.</span>
+          </li>
+        </ol>
+
+        <div class="info-box">
+          <svg class="info-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+          <div class="info-box-body">
+            <strong class="info-box-title">Note: Import into a new calendar</strong>
+            <p class="info-box-desc">
+              Import into a new calendar so the entire schedule can easily be hidden or removed later, if needed. Otherwise, you'd have to delete each event one by one.
+            </p>
           </div>
-          <p class="modal-tip-desc">
-            We recommend creating a new calendar for this schedule. <br>If you ever need to remove it, you can delete the entire calendar instantly, rather than deleting each event one by one.
-          </p>
-        </div>
-
-        <!-- Platform Tabs -->
-        <div class="modal-tabs" role="tablist" aria-label="Calendar instructions by app">
-          <button type="button" class="modal-tab active" role="tab" aria-selected="true" data-tab="google" id="tabGoogle">Google Calendar</button>
-          <button type="button" class="modal-tab" role="tab" aria-selected="false" data-tab="apple" id="tabApple">Apple Calendar</button>
-          <button type="button" class="modal-tab" role="tab" aria-selected="false" data-tab="outlook" id="tabOutlook">Outlook</button>
-        </div>
-
-        <!-- Tab Panels -->
-        <div class="modal-panel active" id="panelGoogle" role="tabpanel" aria-labelledby="tabGoogle">
-          <ol class="modal-steps">
-            <li>Download the <code>.ics</code> file using the button below.</li>
-            <li>In Google Calendar, go to <strong>Settings ⚙️ → Add calendar → Create new calendar</strong> (e.g. name it <em>Quran Plan</em>).</li>
-            <li>Go to <strong>Import & export → Import</strong>, select the downloaded file, and choose your <em>Quran Plan</em> calendar.</li>
-          </ol>
-        </div>
-
-        <div class="modal-panel" id="panelApple" role="tabpanel" aria-labelledby="tabApple" style="display: none;">
-          <ol class="modal-steps">
-            <li>Download and open the <code>.ics</code> file on your Mac or iPhone.</li>
-            <li>When prompted <strong>"Add to:"</strong>, select <strong>New Calendar</strong> instead of your personal calendar.</li>
-            <li>You can now toggle or delete all days anytime by right-clicking that calendar.</li>
-          </ol>
-        </div>
-
-        <div class="modal-panel" id="panelOutlook" role="tabpanel" aria-labelledby="tabOutlook" style="display: none;">
-          <ol class="modal-steps">
-            <li>Download the <code>.ics</code> file below.</li>
-            <li>In Outlook Calendar, click <strong>Add calendar → Upload from file</strong>.</li>
-            <li>Choose your file and select <strong>New calendar</strong> as the destination.</li>
-          </ol>
         </div>
 
         <!-- Don't show again checkbox -->

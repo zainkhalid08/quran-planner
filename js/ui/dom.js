@@ -33,6 +33,7 @@ export const DOM = {
   calendarModalCancelBtn: document.getElementById('calendarModalCancelBtn'),
   calendarModalDownloadBtn: document.getElementById('calendarModalDownloadBtn'),
   calendarModalDaysCount: document.getElementById('calendarModalDaysCount'),
+  calendarModalDateRange: document.getElementById('calendarModalDateRange'),
   calendarModalDontShow: document.getElementById('calendarModalDontShow'),
   shareBtn: document.getElementById('shareBtn'),
   downloadBtn: document.getElementById('downloadBtn'),

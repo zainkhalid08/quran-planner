@@ -313,30 +313,83 @@ header p {
   pointer-events: none;
 }
 
-/* ── Ramadan Notification Banner ── */
-.pill-note {
-  display: none;
+/* ── Common Info Box / Tip Component (Form & Modal) ── */
+.info-box,
+.info-container,
+.tip-box,
+.pill-note,
+.modal-tip-box {
+  display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: var(--text);
   background: var(--accent-soft);
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  padding: 11px 14px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+#ramadanNote {
+  display: none;
   margin-top: 12px;
 }
 
-.pill-note svg {
+.modal-card .info-box,
+.modal-card .info-container,
+.modal-card .tip-box,
+.modal-tip-box {
+  margin-bottom: 16px;
+}
+
+.info-box-icon,
+.tip-box-icon,
+.info-box > svg,
+.tip-box > svg,
+.pill-note > svg,
+.modal-tip-title svg {
   flex-shrink: 0;
   margin-top: 2px;
+  color: var(--text);
 }
 
+.info-box-body,
+.tip-box-body,
 .pill-note-text {
   flex: 1;
+  min-width: 0;
 }
 
+.info-box-title,
+.tip-box-title,
+.modal-tip-title {
+  display: block;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.info-box-desc,
+.tip-box-desc,
+.modal-tip-desc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.info-box-desc strong,
+.tip-box-desc strong,
+.modal-tip-desc strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.info-box-close,
+.tip-box-close,
 .pill-note-close {
   flex-shrink: 0;
   display: inline-flex;
@@ -352,11 +405,15 @@ header p {
   transition: color var(--transition-fast), background var(--transition-fast);
 }
 
+.info-box-close:hover,
+.tip-box-close:hover,
 .pill-note-close:hover {
   color: var(--text);
   background: var(--accent-bg);
 }
 
+.info-box-close:focus-visible,
+.tip-box-close:focus-visible,
 .pill-note-close:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -989,115 +1046,72 @@ html.dark .modal-card {
   font-weight: 700;
 }
 
-.modal-tip-box {
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  margin-bottom: 16px;
-}
-
-.modal-tip-title {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-weight: 600;
-  font-size: 0.84rem;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.modal-tip-title svg {
-  flex-shrink: 0;
-  color: var(--text);
-}
-
-.modal-tip-desc {
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  line-height: 1.45;
-}
-
-.modal-tip-desc strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.modal-tabs {
-  display: flex;
-  background: var(--border-subtle);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 3px;
-  gap: 4px;
-  margin-bottom: 14px;
-}
-
-.modal-tab {
-  flex: 1;
-  padding: 7px 10px;
-  border-radius: var(--radius-xs);
-  border: none;
-  background: transparent;
+#calendarModalDateRange {
   color: var(--muted);
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.84rem;
+  margin-left: 2px;
 }
 
-.modal-tab:hover {
-  color: var(--text);
-}
-
-.modal-tab.active {
-  background: var(--card);
-  color: var(--text);
-  box-shadow: var(--shadow-switch);
-}
-
-.modal-tab:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
-
-.modal-panel {
-  margin-bottom: 16px;
-  animation: modalFadeIn 0.15s ease both;
-}
-
-.modal-steps {
-  margin: 0;
-  padding-left: 20px;
+.modal-steps-flow {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step-counter;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  font-size: 0.82rem;
-  color: var(--text-secondary);
+  gap: 10px;
+}
+
+.modal-steps-flow li {
+  counter-increment: step-counter;
+  position: relative;
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.84rem;
   line-height: 1.45;
+  color: var(--text-secondary);
 }
 
-.modal-steps li strong {
+.modal-steps-flow li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  border: 1px solid var(--border);
   color: var(--text);
+  font-weight: 700;
+  font-size: 0.74rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
-.modal-steps li em {
-  font-style: italic;
+.modal-steps-flow li strong {
   color: var(--text);
+  font-weight: 600;
+  font-size: 0.86rem;
 }
 
-.modal-steps li code {
+.modal-steps-flow li code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.78rem;
-  padding: 2px 5px;
+  padding: 1px 5px;
   background: var(--accent-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--text);
+}
+
+.modal-card .info-box {
+  margin-bottom: 14px;
 }
 
 .modal-dont-show-label {

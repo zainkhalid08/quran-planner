@@ -20,6 +20,12 @@ import { downloadCalendarPlan } from '../services/export.js';
 
 let isModalActive = false;
 
+const modalDateFormatter = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric'
+});
+
 /**
  * Handles Escape key navigation while modal is active.
  * @param {KeyboardEvent} event
@@ -29,39 +35,6 @@ function handleKeyDown(event) {
     event.preventDefault();
     closeCalendarModal();
   }
-}
-
-/**
- * Switches the active tab and displays the corresponding calendar guidance panel.
- * @param {string} targetTab - 'google', 'apple', or 'outlook'
- */
-function switchTab(targetTab) {
-  const tabs = DOM.calendarModal?.querySelectorAll('.modal-tab');
-  const panels = {
-    google: document.getElementById('panelGoogle'),
-    apple: document.getElementById('panelApple'),
-    outlook: document.getElementById('panelOutlook')
-  };
-
-  if (!tabs) return;
-
-  tabs.forEach(tab => {
-    const isSelected = tab.dataset.tab === targetTab;
-    tab.classList.toggle('active', isSelected);
-    tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-  });
-
-  Object.entries(panels).forEach(([name, panel]) => {
-    if (panel) {
-      if (name === targetTab) {
-        panel.style.display = 'block';
-        panel.classList.add('active');
-      } else {
-        panel.style.display = 'none';
-        panel.classList.remove('active');
-      }
-    }
-  });
 }
 
 /**
@@ -77,12 +50,30 @@ export function openCalendarModal(plan) {
     DOM.calendarModalDaysCount.textContent = plan.days ? `${plan.days}` : '—';
   }
 
+  // Calculate and format the start and end dates of the plan
+  if (DOM.calendarModalDateRange) {
+    if (plan && plan.schedule && plan.schedule.length > 0) {
+      const firstItem = plan.schedule[0];
+      const lastItem = plan.schedule[plan.schedule.length - 1];
+
+      const startDate = firstItem.date instanceof Date ? firstItem.date : new Date(firstItem.date);
+      const endDate = lastItem.date instanceof Date ? lastItem.date : new Date(lastItem.date);
+
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        const startStr = modalDateFormatter.format(startDate);
+        const endStr = modalDateFormatter.format(endDate);
+        DOM.calendarModalDateRange.textContent = `(${startStr} – ${endStr})`;
+      } else {
+        DOM.calendarModalDateRange.textContent = '';
+      }
+    } else {
+      DOM.calendarModalDateRange.textContent = '';
+    }
+  }
+
   if (DOM.calendarModalDontShow) {
     DOM.calendarModalDontShow.checked = false;
   }
-
-  // Reset to default tab (Google Calendar)
-  switchTab('google');
 
   DOM.calendarModal.style.display = 'flex';
   DOM.calendarModal.setAttribute('aria-hidden', 'false');
@@ -141,16 +132,6 @@ export function initCalendarModal() {
     if (event.target === DOM.calendarModal) {
       closeCalendarModal();
     }
-  });
-
-  // Tab switching
-  const tabs = DOM.calendarModal.querySelectorAll('.modal-tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      if (tab.dataset.tab) {
-        switchTab(tab.dataset.tab);
-      }
-    });
   });
 
   // Download button inside modal
