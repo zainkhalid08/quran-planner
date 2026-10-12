@@ -321,12 +321,5 @@ function calculatePlan({
 
 export {
   ayahsBefore,
-  wordsBefore,
-  getSurahAndAyahFromCumulative,
-  findNearestAyahByWords,
-  snapToNearestRuku,
-  DAY_ENDING_HANDLERS,
-  CALCULATION_STRATEGIES,
-  getPlanDateFormatter,
   calculatePlan
 };

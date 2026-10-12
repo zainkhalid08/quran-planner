@@ -19,7 +19,7 @@
 
 import { DOM } from './dom.js';
 
-export const INFO_ICON_SVG = `
+const INFO_ICON_SVG = `
   <svg class="info-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="12" cy="12" r="10"/>
     <line x1="12" y1="16" x2="12" y2="12"/>
@@ -27,7 +27,7 @@ export const INFO_ICON_SVG = `
   </svg>
 `;
 
-export const CLOSE_ICON_SVG = `
+const CLOSE_ICON_SVG = `
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
     <line x1="3" y1="3" x2="11" y2="11"/>
     <line x1="11" y1="3" x2="3" y2="11"/>
@@ -57,7 +57,7 @@ export function getOrdinal(n) {
  * @param {boolean} [options.includeYear=true]
  * @returns {string}
  */
-export function formatDateOrdinal(date, options = { includeYear: true }) {
+function formatDateOrdinal(date, options = { includeYear: true }) {
   if (!date) return '';
   const d = date instanceof Date ? date : new Date(date);
   const dayOrdinal = getOrdinal(d.getDate());

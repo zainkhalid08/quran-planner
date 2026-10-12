@@ -28,7 +28,6 @@ export const DOM = {
   printBtn: document.getElementById('printBtn'),
   calendarBtn: document.getElementById('calendarBtn'),
   calendarModal: document.getElementById('calendarModal'),
-  calendarModalTitle: document.getElementById('calendarModalTitle'),
   calendarModalCloseBtn: document.getElementById('calendarModalCloseBtn'),
   calendarModalCancelBtn: document.getElementById('calendarModalCancelBtn'),
   calendarModalDownloadBtn: document.getElementById('calendarModalDownloadBtn'),

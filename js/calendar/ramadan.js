@@ -147,8 +147,6 @@ function getEndRamadanPlan(from = new Date()) {
 }
 
 export {
-  getHijriFormatter,
-  getHijriDateParts,
   getNextRamadanStart,
   getEndRamadanPlan
 };

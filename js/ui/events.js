@@ -23,9 +23,8 @@ import { getNextRamadanStart, getEndRamadanPlan } from '../calendar/ramadan.js';
 import { generatePlan, clearPlan, getCurrentPlan } from '../services/plan-service.js';
 import { downloadPlan, printPlan, downloadCalendarPlan } from '../services/export.js';
 import { sharePlan } from '../services/share-service.js';
-import { Storage } from '../services/storage.js';
 import { initCalendarModal, openCalendarModal } from './calendar-modal.js';
-import { getOrdinal, showBeforeRamadanTip, showEndRamadanTip, clearInfoBox } from './info-box.js';
+import { showBeforeRamadanTip, showEndRamadanTip, clearInfoBox } from './info-box.js';
 
 /**
  * Populates the starting Surah dropdown list from the SURAHS array.
