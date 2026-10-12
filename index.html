@@ -287,7 +287,7 @@
           </li>
           <li>
             <strong>Open to import</strong>
-            <span>Open the downloaded file to add the schedule to your calendar app.</span>
+            <span>Open the downloaded file to add the schedule to your calendar.</span>
           </li>
         </ol>
 
@@ -300,21 +300,21 @@
           <div class="info-box-body">
             <strong class="info-box-title">Note: Import into a new calendar</strong>
             <p class="info-box-desc">
-              Import into a new calendar so the entire schedule can easily be hidden or removed later, if needed. Otherwise, you'd have to delete each event one by one.
+              Import this into a new calendar so you can easily hide or delete the entire schedule later, if needed. Otherwise, you'd have to delete each event one by one.
             </p>
           </div>
         </div>
 
-        <!-- Don't show again checkbox -->
-        <label class="modal-dont-show-label">
+        <!-- Acknowledgement checkbox -->
+        <label class="modal-dont-show-label" id="calendarModalAckWrap">
           <input type="checkbox" id="calendarModalDontShow" />
-          <span>Don't show this tip again</span>
+          <span>I've read the note and I understand</span>
         </label>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="modal-btn modal-btn-secondary" id="calendarModalCancelBtn">Cancel</button>
-        <button type="button" class="modal-btn modal-btn-primary" id="calendarModalDownloadBtn">
+        <button type="button" class="modal-btn modal-btn-primary" id="calendarModalDownloadBtn" disabled>
           <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M7.5 10.5L3.5 6.5H6V1.5H9V6.5H11.5L7.5 10.5Z" fill="currentColor" />
             <path d="M2 12.5H13V13.5H2V12.5Z" fill="currentColor" />

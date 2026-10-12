@@ -212,12 +212,6 @@ function initUIEvents() {
   // Add to Calendar action button
   if (DOM.calendarBtn) {
     DOM.calendarBtn.addEventListener('click', () => {
-      const skipTip = Storage.getItem(Storage.KEYS.SKIP_CALENDAR_TIP) === 'true';
-      if (skipTip) {
-        if (typeof downloadCalendarPlan === 'function') downloadCalendarPlan();
-        return;
-      }
-
       const plan = typeof getCurrentPlan === 'function' ? getCurrentPlan() : null;
       if (!plan || !plan.schedule || !plan.schedule.length) {
         if (typeof downloadCalendarPlan === 'function') downloadCalendarPlan();

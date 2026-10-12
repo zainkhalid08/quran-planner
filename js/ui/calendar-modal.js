@@ -15,7 +15,6 @@
  */
 
 import { DOM } from './dom.js';
-import { Storage } from '../services/storage.js';
 import { downloadCalendarPlan } from '../services/export.js';
 
 let isModalActive = false;
@@ -71,8 +70,16 @@ export function openCalendarModal(plan) {
     }
   }
 
+  if (DOM.calendarModalAckWrap) {
+    DOM.calendarModalAckWrap.style.display = 'flex';
+  }
+
   if (DOM.calendarModalDontShow) {
     DOM.calendarModalDontShow.checked = false;
+  }
+
+  if (DOM.calendarModalDownloadBtn) {
+    DOM.calendarModalDownloadBtn.disabled = true;
   }
 
   DOM.calendarModal.style.display = 'flex';
@@ -81,16 +88,18 @@ export function openCalendarModal(plan) {
 
   document.addEventListener('keydown', handleKeyDown);
 
-  // Focus primary download button for accessible navigation
-  const focusBtn = () => {
-    if (DOM.calendarModalDownloadBtn) {
-      DOM.calendarModalDownloadBtn.focus();
+  // Focus the checkbox so user explicitly acknowledges before downloading
+  const focusInitial = () => {
+    if (DOM.calendarModalDontShow) {
+      DOM.calendarModalDontShow.focus();
+    } else if (DOM.calendarModalCancelBtn) {
+      DOM.calendarModalCancelBtn.focus();
     }
   };
   if (typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(focusBtn);
+    requestAnimationFrame(focusInitial);
   } else {
-    setTimeout(focusBtn, 0);
+    setTimeout(focusInitial, 0);
   }
 }
 
@@ -134,11 +143,18 @@ export function initCalendarModal() {
     }
   });
 
+  // Enable/disable download button based on checkbox confirmation
+  if (DOM.calendarModalDontShow && DOM.calendarModalDownloadBtn) {
+    DOM.calendarModalDontShow.addEventListener('change', () => {
+      DOM.calendarModalDownloadBtn.disabled = !DOM.calendarModalDontShow.checked;
+    });
+  }
+
   // Download button inside modal
   if (DOM.calendarModalDownloadBtn) {
     DOM.calendarModalDownloadBtn.addEventListener('click', () => {
-      if (DOM.calendarModalDontShow && DOM.calendarModalDontShow.checked) {
-        Storage.setItem(Storage.KEYS.SKIP_CALENDAR_TIP, 'true');
+      if (!DOM.calendarModalDontShow || !DOM.calendarModalDontShow.checked) {
+        return;
       }
       closeCalendarModal();
       if (typeof downloadCalendarPlan === 'function') {

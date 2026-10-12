@@ -1200,6 +1200,13 @@ html.dark .modal-card {
   outline-offset: 1px;
 }
 
+.modal-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: none;
+}
+
 .modal-btn-primary svg {
   flex-shrink: 0;
 }
