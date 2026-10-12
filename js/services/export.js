@@ -13,8 +13,10 @@
  * - `exportService`: Namespace object grouping export capabilities.
  */
 import { DOM } from '../ui/dom.js';
+import { APP_VERSION } from '../config.js';
 import { showToast } from '../ui/toast.js';
 import { getCurrentPlan } from './plan-service.js';
+import { generateShareUrl } from './share-service.js';
 
 /**
  * Renders the plan card onto a canvas using html2canvas and triggers a PNG file download.
@@ -176,19 +178,32 @@ function formatIcsDate(date) {
 }
 
 /**
- * Builds standard RFC 5545 iCalendar content string for the schedule.
- * @param {Array<Object>} schedule
- * @param {number} totalDays
+ * Converts a full transliterated Surah name (e.g. "An-Nisa", "Al-Baqarah") to a concise title (e.g. "Nisa", "Baqarah").
+ * @param {string} name
  * @returns {string}
  */
-function generateIcs(schedule, totalDays) {
+function getShortSurahName(name) {
+  if (!name) return 'Surah';
+  return name.replace(/^(?:Al|An|At|Ar|As|Ash|Az|Ad|Ath|Al-)\b-?/i, '').replace(/^-+/, '');
+}
+
+/**
+ * Builds standard RFC 5545 iCalendar content string for the schedule.
+ * @param {Object} plan - Complete plan object
+ * @returns {string}
+ */
+function generateIcs(plan) {
+  const schedule = plan.schedule;
+  const totalDays = plan.days;
+  const shareUrl = typeof generateShareUrl === 'function' ? generateShareUrl(plan) : '';
+
   const now = new Date();
   const dtstamp = now.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Quran Planner//EN',
+    `PRODID:-//quranplanner.org v${APP_VERSION}//EN`,
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'X-WR-CALNAME:Quran Reading Plan'
@@ -202,13 +217,23 @@ function generateIcs(schedule, totalDays) {
     const dtEnd = formatIcsDate(nextDay);
 
     const surahName = item.surah?.name || 'Surah';
+    const shortSurah = getShortSurahName(surahName);
     const surahNumber = item.surah?.number || '';
     const surahArabic = item.surah?.arabic ? ` (${item.surah.arabic})` : '';
     const targetAyah = item.targetAyah || 1;
     const dayCount = item.dayAyahsCount || 0;
 
-    const summary = `Day ${item.day}: Read till Surah ${surahName} ${targetAyah}`;
-    const description = `Quran Reading Plan - Day ${item.day} of ${totalDays}\\nGoal: Read till Surah ${surahNumber}. ${surahName}${surahArabic} Ayah ${targetAyah}.\\nDaily reading: ${dayCount} ayahs.`;
+    const summary = `Day ${item.day}/${totalDays}: Till ${shortSurah} ${targetAyah}`;
+
+    const descParts = [
+      `Day ${item.day} of ${totalDays}`,
+      `Read till Surah ${surahNumber}. ${surahName}${surahArabic} Ayah ${targetAyah}.`,
+      `Ayah count is ${dayCount}`
+    ];
+    if (shareUrl) {
+      descParts.push(shareUrl);
+    }
+    const description = descParts.join('\\n');
 
     lines.push(
       'BEGIN:VEVENT',
@@ -264,7 +289,7 @@ function downloadCalendarPlan() {
   }
 
   try {
-    const icsData = generateIcs(plan.schedule, plan.days);
+    const icsData = generateIcs(plan);
     const filename = `quran-plan-${plan.days}days.ics`;
 
     let downloaded = false;

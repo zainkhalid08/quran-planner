@@ -1,4 +1,4 @@
-# quranplanner.org` — Development & System Architecture Guide
+# quranplanner.org — Development & System Architecture Guide
 
 Welcome to the **Quran Planner** codebase! This document serves as the comprehensive architectural reference and guide.
 

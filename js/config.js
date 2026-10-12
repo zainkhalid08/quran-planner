@@ -20,7 +20,10 @@ export const DAY_ENDING_STRATEGIES = {
   NEAREST_RUKU: 'NEAREST_RUKU'
 };
 
+export const APP_VERSION = '2026.10.1.1.0';
+
 export const CONFIG = {
+  version: APP_VERSION,
   readingVolumeCalculationMode: READING_CALCULATION_MODES.BY_WORD_COUNT,
   dayEndingStrategy: DAY_ENDING_STRATEGIES.NEAREST_RUKU,
   showDailyAyahsCount: false,
