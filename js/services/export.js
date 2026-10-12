@@ -143,13 +143,9 @@ function printPlan() {
     return;
   }
   isPrinting = true;
-  const originalTitle = document.title;
-  let hasRestored = false;
+  document.title = 'quranplanner.org';
 
   const restoreTitle = () => {
-    if (hasRestored) return;
-    hasRestored = true;
-    document.title = originalTitle;
     isPrinting = false;
     window.removeEventListener('afterprint', restoreTitle);
   };
@@ -157,14 +153,12 @@ function printPlan() {
   window.addEventListener('afterprint', restoreTitle, { once: true });
 
   try {
-    document.title = 'quranplanner.org';
     window.print();
   } catch (err) {
     console.error('Print failed:', err);
     restoreTitle();
   } finally {
-    // Fallback restoration if afterprint does not fire
-    setTimeout(restoreTitle, 1000);
+    setTimeout(restoreTitle, 3000);
   }
 }
 

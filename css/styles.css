@@ -1231,7 +1231,7 @@ html.dark .modal-card {
 
 .toast-container {
   position: fixed;
-  top: 24px;
+  top: max(calc(env(safe-area-inset-top, 0px) + 24px), 32px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
@@ -1359,7 +1359,7 @@ html.dark .toast:hover {
 
 @media (max-width: 480px) {
   .toast-container {
-    top: 16px;
+    top: max(calc(env(safe-area-inset-top, 0px) + 18px), 64px);
     max-width: 100%;
     padding: 0 12px;
   }
