@@ -1652,12 +1652,11 @@ html.dark .toast:hover {
 .bookmark-line {
   position: absolute;
   left: 0;
-  right: 34px;
+  right: 2px; /* runs under the ribbon so the two join */
   top: -1px;
   height: 2px;
   border-radius: 2px;
   background: var(--accent);
-  opacity: 0.9;
 }
 
 .bookmark-line::before {
@@ -1675,7 +1674,7 @@ html.dark .toast:hover {
 .bookmark-tab {
   position: absolute;
   right: 2px;
-  top: -3px;
+  top: -1px; /* top edge flush with the line */
   width: 28px;
   height: 56px;
   padding: 0;
@@ -1697,10 +1696,6 @@ html.dark .toast:hover {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
   transition: transform var(--transition-fast);
-}
-
-.bookmark-tab:hover::before {
-  transform: translateY(2px);
 }
 
 .bookmark-tab:focus-visible::before {
@@ -1819,7 +1814,6 @@ html.dark .toast:hover {
 
 @media (max-width: 480px) {
   .plan-list { padding-right: 30px; }
-  .bookmark-line { right: 30px; }
   .bookmark-tip { right: 34px; }
 }
 
