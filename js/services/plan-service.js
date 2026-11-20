@@ -20,6 +20,7 @@ import { showToast } from '../ui/toast.js';
 import { ayahsBefore, calculatePlan } from '../core/algo.js';
 import { renderPlan } from '../ui/plan-renderer.js';
 import { updateAyahMax, clearRamadanNote } from '../ui/events.js';
+import { resetBookmark } from '../ui/bookmark.js';
 
 /**
  * Tracks the most recently calculated plan in memory.
@@ -195,6 +196,7 @@ function getCurrentPlan() {
 function clearPlan() {
   currentPlan = null;
   Storage.removeItem(Storage.KEYS.PLAN);
+  resetBookmark();
 
   // Reset days input and all pill selections
   if (DOM.days) DOM.days.value = '';

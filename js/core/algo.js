@@ -321,5 +321,6 @@ function calculatePlan({
 
 export {
   ayahsBefore,
-  calculatePlan
+  calculatePlan,
+  getSurahAndAyahFromCumulative
 };

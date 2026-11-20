@@ -15,6 +15,7 @@
 
 import { DOM } from './dom.js';
 import { CONFIG } from '../config.js';
+import { syncBookmark } from './bookmark.js';
 
 /**
  * Cached formatters to prevent repeated synchronous Intl instantiation.
@@ -75,7 +76,7 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
 
     row.innerHTML = `
       <div class="day-info">
-        <div class="day-num">Day ${item.day}</div>
+        <div class="day-num"><svg class="day-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Day ${item.day}</div>
         <div class="day-date">${item.dateStr}</div>
         ${item.isToday ? '<span class="today-pill" aria-label="Today\'s reading">Today</span>' : ''}
       </div>
@@ -104,6 +105,7 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
   }
 
   DOM.results.style.display = 'block';
+  syncBookmark(schedule);
   // Re-trigger animation on regenerate
   DOM.results.style.animation = 'none';
   void DOM.results.offsetWidth;

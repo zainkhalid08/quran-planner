@@ -114,6 +114,7 @@ quran-planner/
 │       ├── dom.js               # Centralized cached registry of DOM element references
 │       ├── events.js            # User interactions, pill handlers, form synchronization
 │       ├── plan-renderer.js     # Efficient DocumentFragment DOM table builder
+│       ├── bookmark.js          # Draggable single bookmark marking how far the user has read
 │       ├── calendar-modal.js    # Add-to-Calendar guidance dialog with acknowledgement enforcement
 │       ├── info-box.js          # Unified reusable callout component for tips & duration notices
 │       ├── toast.js             # Accessible, non-blocking notification alerts with vibration
@@ -225,6 +226,12 @@ DOM.days.value = 30;
 - Batches all day-by-day table row elements into a single in-memory `DocumentFragment` before updating `#planRows`.
 - Highlights today's reading with `.today-row` and a badge `Today`.
 - Uses `Intl.NumberFormat` and `Intl.DateTimeFormat` with cached instances.
+
+### `bookmark.js`
+- One draggable ribbon (like a physical bookmark) that the user drops at the ayah they stopped at, anywhere inside a day or in the gap between two days (= that day completed).
+- Position is stored in `localStorage` (`Storage.KEYS.BOOKMARK`) as a **global ayah count**, so it stays at the same place in the Quran when the plan is regenerated with a different day count.
+- Inside a day card, ayahs map linearly from card top (first ayah) to card bottom (last ayah). Days above the ribbon get `.read`, the day it sits in gets `.partial` (tinted via `--bookmark-fill`).
+- `syncBookmark(schedule)` runs after every `renderPlan`; `resetBookmark()` runs from `clearPlan`. Keyboard: arrows = 1 ayah, PageUp/PageDown = 1 day. Hidden in print.
 
 ### `events.js`
 The master event hub. Initialized once on page boot (`initUIEvents()`):
