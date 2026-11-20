@@ -1745,7 +1745,7 @@ html.dark .toast:hover {
 
 .bookmark-tip {
   position: absolute;
-  right: 38px;
+  right: 2px; /* above the line, right-aligned with the ribbon, clear of the thumb */
   white-space: nowrap;
   pointer-events: none;
   font-size: 0.74rem;
@@ -1753,8 +1753,8 @@ html.dark .toast:hover {
 }
 
 .bookmark-tip {
-  top: 14px;
-  transform: translateY(-50%);
+  top: -14px;
+  transform: translateY(-100%);
   padding: 7px 12px;
   border-radius: 10px;
   background: var(--accent);
@@ -1814,7 +1814,6 @@ html.dark .toast:hover {
 
 @media (max-width: 480px) {
   .plan-list { padding-right: 30px; }
-  .bookmark-tip { right: 34px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
