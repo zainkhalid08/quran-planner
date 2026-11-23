@@ -22,6 +22,7 @@ import { DOM } from './dom.js';
 import { Storage } from '../services/storage.js';
 import { getSurahAndAyahFromCumulative } from '../core/algo.js';
 import { renderProgress, hideProgress } from './progress.js';
+import { showCompletion, forgetCompletion } from './completion.js';
 
 const GAP_HALF = 3; // half of the 6px margin between day rows
 const EDGE_SCROLL_ZONE = 90;
@@ -129,6 +130,7 @@ function paint(v) {
   el.tab.setAttribute('aria-valuenow', String(v));
   el.tab.setAttribute('aria-valuetext', text);
   el.tip.textContent = text;
+  el.ribbon.classList.toggle('complete', v === state.total);
   renderProgress({ value: v, total: state.total, dragging: state.dragging });
 }
 
@@ -142,6 +144,10 @@ function setValue(v, { snap = true, save = true } = {}) {
   paint(state.value);
   place(yOf(state.value), snap);
   if (save) Storage.setItem(Storage.KEYS.BOOKMARK, String(state.base + state.value));
+  // A drop or key press that lands on the very end of the plan: show the completion card (once per plan)
+  if (save && state.value === state.total) {
+    showCompletion({ schedule: state.schedule, base: state.base, total: state.total });
+  }
 }
 
 /* ── Dragging ───────────────────────────────────────────────────────────── */
@@ -251,6 +257,7 @@ function syncBookmark(schedule) {
 /** Removes the saved position and hides the ribbon (used when the plan is cleared). */
 function resetBookmark() {
   Storage.removeItem(Storage.KEYS.BOOKMARK);
+  forgetCompletion();
   hideProgress();
   if (!state.ready) return;
   el.ribbon.hidden = true;

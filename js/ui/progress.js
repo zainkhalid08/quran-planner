@@ -50,6 +50,7 @@ function renderProgress({ value, total, dragging = false }) {
   if (value === total) pct = 100;
 
   el.value.textContent = pctText;
+  el.strip.classList.toggle('complete', value === total);
   el.fill.style.width = `${ratio * 100}%`;
   el.track.setAttribute('aria-valuenow', String(pct));
   el.track.setAttribute('aria-valuetext', `${pctText} of the plan read`);
