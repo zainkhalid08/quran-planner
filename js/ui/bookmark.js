@@ -23,6 +23,7 @@ import { Storage } from '../services/storage.js';
 import { getSurahAndAyahFromCumulative } from '../core/algo.js';
 import { renderProgress, hideProgress } from './progress.js';
 import { showCompletion, forgetCompletion } from './completion.js';
+import { trackReading, renderStreak } from './streak.js';
 
 const GAP_HALF = 3; // half of the 6px margin between day rows
 const EDGE_SCROLL_ZONE = 90;
@@ -143,7 +144,12 @@ function setValue(v, { snap = true, save = true } = {}) {
   state.value = Math.max(0, Math.min(state.total, v));
   paint(state.value);
   place(yOf(state.value), snap);
-  if (save) Storage.setItem(Storage.KEYS.BOOKMARK, String(state.base + state.value));
+  if (save) {
+    const previous = parseInt(Storage.getItem(Storage.KEYS.BOOKMARK), 10);
+    const next = state.base + state.value;
+    Storage.setItem(Storage.KEYS.BOOKMARK, String(next));
+    trackReading(Number.isFinite(previous) ? previous : state.base, next);
+  }
   // A drop or key press that lands on the very end of the plan: show the completion card (once per plan)
   if (save && state.value === state.total) {
     showCompletion({ schedule: state.schedule, base: state.base, total: state.total });
@@ -252,6 +258,7 @@ function syncBookmark(schedule) {
 
   el.ribbon.hidden = false;
   setValue(relative, { snap: false, save: false });
+  renderStreak();
 }
 
 /** Removes the saved position and hides the ribbon (used when the plan is cleared). */

@@ -639,7 +639,9 @@ input#startAyah {
 }
 
 #resultsExportClone .stats-reference-row {
+  display: flex;
   justify-content: center;
+  gap: 32px;
   margin-bottom: 16px;
 }
 
@@ -665,15 +667,34 @@ input#startAyah {
   border-top: 1px dashed var(--border);
 }
 
-/* ── Stats Row (Inline Reference Style with Titles) ── */
+/* ── Stats Row (Inline Reference Style with Titles) ──
+   A grid rather than a wrapping flex row: the layout is fixed per width, so a pill changing width
+   while the bookmark is dragged can never re-wrap the row and move the plan rows.
+   It responds to the width of its own container (container query), not the window, so it keeps
+   working wherever the results card is placed.
+   - Default (narrow, and browsers without container queries): two equal columns.
+   - 552px and wider: one row with equal gaps. 552px fits the widest content (a one-day plan's
+     "6,236 ayahs / day" plus "100% read" and 4-digit day counts); move it up if pills are added. */
+.stats-container {
+  container: stats / inline-size;
+}
+
 .stats-reference-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: start;
   align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 32px;
+  column-gap: 20px;
+  row-gap: 14px;
   padding: 4px 0 12px 0;
   margin-bottom: 8px;
+}
+
+@container stats (min-width: 552px) {
+  .stats-reference-row {
+    grid-template-columns: repeat(4, max-content);
+    column-gap: 32px;
+  }
 }
 
 .stat-pill-item {
@@ -718,6 +739,7 @@ input#startAyah {
 
 /* ── Reading Progress (driven by the bookmark, see js/ui/progress.js) ── */
 .stat-progress[hidden],
+.stat-streak[hidden],
 .progress-strip[hidden] {
   display: none !important;
 }
@@ -728,13 +750,57 @@ input#startAyah {
   margin: -2px 0 18px 0;
 }
 
-/* Fixed box sized for "100% read" so the pill never changes width (no row re-wrap) */
-.stat-progress .stat-pill-text {
-  min-width: 9ch;
-}
-
 #statProgress {
   font-variant-numeric: tabular-nums;
+}
+
+/* Hadith card shown on hover / tap of the Streak pill (fixed overlay: never shifts the layout) */
+.streak-hadith {
+  position: fixed;
+  z-index: 900; /* below modals (1000) */
+  width: max-content;
+  max-width: min(340px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.22), 0 0 1px rgba(0, 0, 0, 0.1);
+  animation: streakHadithIn 0.15s ease-out;
+}
+
+@keyframes streakHadithIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+html.dark .streak-hadith {
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.streak-hadith[hidden] {
+  display: none;
+}
+
+.streak-hadith-text {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.streak-hadith-ref {
+  margin: 8px 0 0;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.streak-hadith-divider {
+  margin: 12px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
 }
 
 .progress-track {
@@ -753,6 +819,7 @@ input#startAyah {
 }
 
 #resultsExportClone .stat-progress,
+#resultsExportClone .stat-streak,
 #resultsExportClone .progress-strip {
   display: none !important;
 }
@@ -1627,7 +1694,8 @@ html.dark .toast:hover {
   }
 
   .stats-reference-row {
-    gap: 20px;
+    column-gap: 20px;
+    row-gap: 12px;
     padding-bottom: 8px;
     margin-bottom: 6px;
   }
@@ -2004,6 +2072,7 @@ html.dark .toast:hover {
   .bookmark,
   .day-tick,
   .stat-progress,
+  .stat-streak,
   .progress-strip {
     display: none !important;
   }

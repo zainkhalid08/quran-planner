@@ -20,7 +20,8 @@ const Storage = {
     PLAN: 'quran_planner_saved_plan',
     THEME: 'quran_planner_theme_preference',
     BOOKMARK: 'quran_planner_bookmark',
-    COMPLETION: 'quran_planner_completion_shown'
+    COMPLETION: 'quran_planner_completion_shown',
+    STREAK: 'quran_planner_streak'
   },
 
   /**
