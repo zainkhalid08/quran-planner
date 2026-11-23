@@ -55,20 +55,9 @@ function createElements() {
     </button>`;
   DOM.planList.appendChild(ribbon);
 
-  const chip = (dir, path) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = `bookmark-jump bookmark-jump-${dir}`;
-    b.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg><span></span>`;
-    document.body.appendChild(b);
-    return b;
-  };
-
   el.ribbon = ribbon;
   el.tab = ribbon.querySelector('.bookmark-tab');
   el.tip = ribbon.querySelector('.bookmark-tip');
-  el.up = chip('up', 'M12 19V5M5 12l7-7 7 7');
-  el.down = chip('down', 'M12 5v14M5 12l7 7 7-7');
 }
 
 /* ── Geometry ───────────────────────────────────────────────────────────── */
@@ -151,24 +140,6 @@ function setValue(v, { snap = true, save = true } = {}) {
   paint(state.value);
   place(yOf(state.value), snap);
   if (save) Storage.setItem(Storage.KEYS.BOOKMARK, String(state.base + state.value));
-  updateJumpChips();
-}
-
-/* ── Jump chips (shown when the ribbon is off-screen) ───────────────────── */
-
-function updateJumpChips() {
-  if (!state.ready || el.ribbon.hidden) return;
-  const y = DOM.planList.getBoundingClientRect().top + yOf(state.value);
-  const text = state.value ? `Bookmark · ${describe(state.value)}` : 'Bookmark';
-  el.up.querySelector('span').textContent = text;
-  el.down.querySelector('span').textContent = text;
-  el.up.classList.toggle('show', !state.dragging && state.value > 0 && y < 40);
-  el.down.classList.toggle('show', !state.dragging && y > window.innerHeight - 40);
-}
-
-function scrollToBookmark() {
-  const top = DOM.planList.getBoundingClientRect().top + window.scrollY + yOf(state.value);
-  window.scrollTo({ top: top - window.innerHeight / 2, behavior: 'smooth' });
 }
 
 /* ── Dragging ───────────────────────────────────────────────────────────── */
@@ -238,10 +209,6 @@ function bindEvents() {
     e.preventDefault();
   });
 
-  el.up.addEventListener('click', scrollToBookmark);
-  el.down.addEventListener('click', scrollToBookmark);
-  window.addEventListener('scroll', updateJumpChips, { passive: true });
-
   // Row heights change with viewport width and font loading: keep the ribbon glued to its ayah
   if (typeof ResizeObserver === 'function') {
     new ResizeObserver(() => {
@@ -284,8 +251,6 @@ function resetBookmark() {
   Storage.removeItem(Storage.KEYS.BOOKMARK);
   if (!state.ready) return;
   el.ribbon.hidden = true;
-  el.up.classList.remove('show');
-  el.down.classList.remove('show');
   state.value = 0;
 }
 
