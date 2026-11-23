@@ -708,6 +708,47 @@ input#startAyah {
   font-weight: 700;
 }
 
+/* ── Reading Progress (driven by the bookmark, see js/ui/progress.js) ── */
+.stat-progress[hidden],
+.progress-strip[hidden] {
+  display: none !important;
+}
+
+/* Everything here updates while the bookmark is dragged, so its size must not depend on the value:
+   a height or wrap change would move the plan rows under the pointer (see progress.js). */
+.progress-strip {
+  margin: -2px 0 18px 0;
+}
+
+/* Fixed box sized for "100% read" so the pill never changes width (no row re-wrap) */
+.stat-progress .stat-pill-text {
+  min-width: 9ch;
+}
+
+#statProgress {
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+#resultsExportClone .stat-progress,
+#resultsExportClone .progress-strip {
+  display: none !important;
+}
+
 /* ── Get PDF, Calendar & Share Action Buttons under Stats ── */
 .stats-actions {
   display: flex;
@@ -1784,7 +1825,9 @@ html.dark .toast:hover {
 @media print {
   /* Bookmark is screen-only; printed plans show every day unfaded */
   .bookmark,
-  .day-tick {
+  .day-tick,
+  .stat-progress,
+  .progress-strip {
     display: none !important;
   }
 

@@ -21,6 +21,7 @@
 import { DOM } from './dom.js';
 import { Storage } from '../services/storage.js';
 import { getSurahAndAyahFromCumulative } from '../core/algo.js';
+import { renderProgress, hideProgress } from './progress.js';
 
 const GAP_HALF = 3; // half of the 6px margin between day rows
 const EDGE_SCROLL_ZONE = 90;
@@ -128,6 +129,7 @@ function paint(v) {
   el.tab.setAttribute('aria-valuenow', String(v));
   el.tab.setAttribute('aria-valuetext', text);
   el.tip.textContent = text;
+  renderProgress({ value: v, total: state.total, dragging: state.dragging });
 }
 
 function place(y, snap) {
@@ -249,6 +251,7 @@ function syncBookmark(schedule) {
 /** Removes the saved position and hides the ribbon (used when the plan is cleared). */
 function resetBookmark() {
   Storage.removeItem(Storage.KEYS.BOOKMARK);
+  hideProgress();
   if (!state.ready) return;
   el.ribbon.hidden = true;
   state.value = 0;
