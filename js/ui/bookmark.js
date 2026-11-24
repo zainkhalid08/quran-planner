@@ -24,7 +24,6 @@ import { getSurahAndAyahFromCumulative } from '../core/algo.js';
 import { renderProgress, hideProgress } from './progress.js';
 import { showCompletion, forgetCompletion } from './completion.js';
 import { trackReading, renderStreak } from './streak.js';
-import { showToast } from './toast.js';
 
 const GAP_HALF = 3; // half of the 6px margin between day rows
 const EDGE_SCROLL_ZONE = 90;
@@ -154,20 +153,8 @@ function setValue(v, { snap = true, save = true } = {}) {
     // A drop or key press that lands on the very end of the plan: show the completion card (once per plan)
     if (state.value === state.total) {
       showCompletion({ schedule: state.schedule, base: state.base, total: state.total });
-    } else if (next !== previous) {
-      showStorageNoticeOnce();
     }
   }
-}
-
-/**
- * The first time the bookmark actually moves, explain where progress lives. Shown once ever
- * (not per plan). Skipped when the move opens the completion card, so it comes on a later move.
- */
-function showStorageNoticeOnce() {
-  if (Storage.getItem(Storage.KEYS.STORAGE_NOTICE)) return;
-  Storage.setItem(Storage.KEYS.STORAGE_NOTICE, '1');
-  showToast('Progress saved in this browser only. Clearing browser data will erase it.', 'info', 6000);
 }
 
 /* ── Dragging ───────────────────────────────────────────────────────────── */
