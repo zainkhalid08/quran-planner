@@ -176,6 +176,35 @@
     </div>
 
     <!-- Stats Row (Design Reference Style with Titles) -->
+    <!-- Reading progress and streak, with a full-width progress bar under them (screen only).
+         Progress (+ bar) and Streak show and hide independently: see js/ui/progress.js, js/ui/streak.js -->
+    <div class="progress-strip" id="progressStrip">
+      <div class="progress-stats">
+        <div class="stat-pill-item stat-progress" id="statProgressItem" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"></path>
+          </svg>
+          <div class="stat-pill-text" aria-hidden="true">
+            <span class="stat-pill-label">Progress</span>
+            <span class="stat-pill-val"><span id="statProgress">0%</span> read</span>
+          </div>
+        </div>
+        <div class="stat-pill-item stat-streak" id="statStreakItem" aria-describedby="streakHadith" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+          </svg>
+          <div class="stat-pill-text">
+            <span class="stat-pill-label">Streak</span>
+            <span class="stat-pill-val" id="statStreakVal"><span>0</span> days</span>
+          </div>
+        </div>
+      </div>
+      <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Plan progress"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
     <!-- Container for the stats row: its layout responds to this width (container query), not the window -->
     <div class="stats-container">
       <div class="stats-reference-row">
@@ -201,32 +230,6 @@
             <span class="stat-pill-val"><span id="statAvg">—</span> ayahs / day</span>
           </div>
         </div>
-        <div class="stat-pill-item stat-progress" id="statProgressItem" hidden>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"></path>
-          </svg>
-          <div class="stat-pill-text">
-            <span class="stat-pill-label">Progress</span>
-            <span class="stat-pill-val"><span id="statProgress">0%</span> read</span>
-          </div>
-        </div>
-        <div class="stat-pill-item stat-streak" id="statStreakItem" aria-describedby="streakHadith" hidden>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
-          </svg>
-          <div class="stat-pill-text">
-            <span class="stat-pill-label">Streak</span>
-            <span class="stat-pill-val" id="statStreakVal"><span>0</span> days</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Reading progress bar (driven by the bookmark, screen only) -->
-    <div class="progress-strip" id="progressStrip" hidden>
-      <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Plan progress"
-           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div class="progress-fill" id="progressFill"></div>
       </div>
     </div>
 

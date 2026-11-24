@@ -1,10 +1,10 @@
 /**
  * @file progress.js
- * @description Reading progress summary shown in the results stats row, driven by the bookmark.
+ * @description Reading progress stat and full-width bar at the top of the results card, driven by the bookmark.
  *
  * What is this file for:
- * - Turns the bookmark position into an at-a-glance summary: percent of the plan read, as a stat
- *   pill and a thin bar under the stats row.
+ * - Turns the bookmark position into an at-a-glance summary: percent of the plan read, shown as
+ *   a "Progress · 23% read" stat with a thin full-width bar under it.
  *
  * What you can find in this file:
  * - `renderProgress`: Called by bookmark.js on every repaint (including while dragging).
@@ -23,20 +23,21 @@ const el = {
   fill: document.getElementById('progressFill')
 };
 
+/** Shows or hides the Progress stat and its bar (the Streak beside it has its own visibility). */
 function setVisible(visible) {
   if (el.item) el.item.hidden = !visible;
-  if (el.strip) el.strip.hidden = !visible;
+  if (el.track) el.track.hidden = !visible;
 }
 
 /**
- * Updates the progress pill and bar.
+ * Updates the progress bar and percentage.
  * @param {Object} p
  * @param {number} p.value - Ayahs read, relative to the plan start (0..total).
  * @param {number} p.total - Ayahs in the plan.
  * @param {boolean} [p.dragging] - True while the bookmark is being dragged.
  */
 function renderProgress({ value, total, dragging = false }) {
-  if (!el.item || !el.strip || !total) return;
+  if (!el.item || !el.track || !total) return;
 
   // Showing/hiding changes the height above the plan list, which moves the rows under a dragged
   // bookmark and flips the value back, so visibility only changes when the drag is not in progress.

@@ -680,31 +680,35 @@ input#startAyah {
 }
 
 /* ── Stats Row (Inline Reference Style with Titles) ──
-   A grid rather than a wrapping flex row: the layout is fixed per width, so a pill changing width
-   while the bookmark is dragged can never re-wrap the row and move the plan rows.
-   It responds to the width of its own container (container query), not the window, so it keeps
-   working wherever the results card is placed.
-   - Default (narrow, and browsers without container queries): two equal columns.
-   - 552px and wider: one row with equal gaps. 552px fits the widest content (a one-day plan's
-     "6,236 ayahs / day" plus "100% read" and 4-digit day counts); move it up if pills are added. */
+   Duration and Pace always sit on one line. A grid rather than a wrapping flex row, so a pill
+   never jumps to a new line and moves the plan rows below.
+   Gaps respond to the width of the row's own container (container query), not the window:
+   - Narrow (phones, and browsers without container queries): 20px gaps, 12px on very small ones.
+     If even that doesn't fit, the auto columns shrink and the longest value wraps onto two
+     lines inside its column instead of overflowing.
+   - 420px and wider: 32px gaps. */
 .stats-container {
   container: stats / inline-size;
 }
 
 .stats-reference-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, auto);
   justify-content: start;
   align-items: center;
   column-gap: 20px;
-  row-gap: 14px;
   padding: 4px 0 12px 0;
   margin-bottom: 8px;
 }
 
-@container stats (min-width: 552px) {
+@container stats (max-width: 319px) {
   .stats-reference-row {
-    grid-template-columns: repeat(4, max-content);
+    column-gap: 12px;
+  }
+}
+
+@container stats (min-width: 420px) {
+  .stats-reference-row {
     column-gap: 32px;
   }
 }
@@ -752,14 +756,39 @@ input#startAyah {
 /* ── Reading Progress (driven by the bookmark, see js/ui/progress.js) ── */
 .stat-progress[hidden],
 .stat-streak[hidden],
-.progress-strip[hidden] {
+.progress-track[hidden] {
   display: none !important;
 }
 
 /* Everything here updates while the bookmark is dragged, so its size must not depend on the value:
    a height or wrap change would move the plan rows under the pointer (see progress.js). */
+/* Top of the results card: Progress and Streak side by side, then a full-width bar.
+   Progress (+ bar) and Streak are hidden independently; when all of them are, the block collapses.
+   Only text widths change during a drag, never heights: even "100% read" next to a 3-digit streak
+   fits comfortably on one line on the smallest phones. */
 .progress-strip {
-  margin: -2px 0 18px 0;
+  container: progress / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+  margin-bottom: 20px;
+}
+
+.progress-strip:not(:has(.stat-pill-item:not([hidden]))) {
+  display: none;
+}
+
+.progress-stats {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+@container progress (max-width: 419px) {
+  .progress-stats {
+    gap: 20px;
+  }
 }
 
 #statProgress {
@@ -830,7 +859,6 @@ html.dark .streak-hadith {
   background: var(--accent);
 }
 
-#resultsExportClone .stat-progress,
 #resultsExportClone .stat-streak,
 #resultsExportClone .progress-strip {
   display: none !important;
@@ -1706,8 +1734,6 @@ html.dark .toast:hover {
   }
 
   .stats-reference-row {
-    column-gap: 20px;
-    row-gap: 12px;
     padding-bottom: 8px;
     margin-bottom: 6px;
   }
@@ -2083,7 +2109,6 @@ html.dark .toast:hover {
   /* Bookmark is screen-only; printed plans show every day unfaded */
   .bookmark,
   .day-tick,
-  .stat-progress,
   .stat-streak,
   .progress-strip {
     display: none !important;
