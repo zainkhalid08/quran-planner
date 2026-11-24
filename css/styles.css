@@ -659,12 +659,24 @@ input#startAyah {
 }
 
 .results-footer {
-  margin-top: 22px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 22px 0 0;
   font-size: 0.74rem;
+  line-height: 1.4;
+  text-align: center;
   color: var(--muted);
-  padding-top: 14px;
-  border-top: 1px dashed var(--border);
+}
+
+.results-footer svg {
+  flex-shrink: 0;
+}
+
+/* About this browser's storage, so it doesn't belong in the downloaded image or the printout */
+#resultsExportClone .results-footer {
+  display: none !important;
 }
 
 /* ── Stats Row (Inline Reference Style with Titles) ──
@@ -2396,16 +2408,9 @@ html.dark .toast:hover {
     background: #ffffff !important;
   }
 
-  /* Printed document footer */
+  /* Storage notice is screen-only */
   .results-footer {
-    margin-top: 14pt !important;
-    padding-top: 8pt !important;
-    border-top: 0.5pt solid #e5e7eb !important;
-    font-size: 8pt !important;
-    color: #6b7280 !important;
-    text-align: center !important;
-    page-break-before: avoid !important;
-    break-before: avoid !important;
+    display: none !important;
   }
 }
 

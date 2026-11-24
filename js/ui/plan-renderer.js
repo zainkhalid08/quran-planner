@@ -21,24 +21,12 @@ import { syncBookmark } from './bookmark.js';
  * Cached formatters to prevent repeated synchronous Intl instantiation.
  */
 let cachedNumberFormatter = null;
-let cachedResultsDateFormatter = null;
 
 function getNumberFormatter() {
   if (!cachedNumberFormatter) {
     cachedNumberFormatter = new Intl.NumberFormat('en-US');
   }
   return cachedNumberFormatter;
-}
-
-function getResultsDateFormatter() {
-  if (!cachedResultsDateFormatter) {
-    cachedResultsDateFormatter = new Intl.DateTimeFormat('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  }
-  return cachedResultsDateFormatter;
 }
 
 /**
@@ -48,9 +36,8 @@ function getResultsDateFormatter() {
  * @param {number} planData.days - Total days in the plan.
  * @param {number} planData.remaining - Total ayahs to read.
  * @param {Array<Object>} planData.schedule - Array of day items calculated by algo.js.
- * @param {Date} planData.planStartDate - Plan start date.
  */
-function renderPlan({ days, remaining, schedule, planStartDate }) {
+function renderPlan({ days, remaining, schedule }) {
   const numberFormatter = getNumberFormatter();
 
   if (DOM.statDays) DOM.statDays.textContent = days;
@@ -113,11 +100,6 @@ function renderPlan({ days, remaining, schedule, planStartDate }) {
 
   if (DOM.clearPlanBtn) DOM.clearPlanBtn.style.display = 'flex';
   if (DOM.resultsActions) DOM.resultsActions.style.display = 'flex';
-
-  if (DOM.resultsFooter) {
-    const dateStr = getResultsDateFormatter().format(planStartDate);
-    DOM.resultsFooter.textContent = `Generated on ${dateStr}`;
-  }
 }
 
 export { renderPlan };

@@ -278,7 +278,14 @@
       <div id="planRows" role="list" aria-label="Reading schedule day-by-day"></div>
     </div>
 
-    <div class="results-footer" id="resultsFooter"></div>
+    <!-- Storage notice (screen only): everything lives in this browser's localStorage, no servers -->
+    <p class="results-footer">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="11" width="16" height="10" rx="2" />
+        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+      </svg>
+      Saved in this browser only. Clearing browser data erases your progress.
+    </p>
 
   </div>
 
@@ -397,11 +404,13 @@
 
   <!-- Hadiths on consistency, shown on hover / tap of the Streak pill (js/ui/streak.js) -->
   <div class="streak-hadith" id="streakHadith" role="tooltip" hidden>
-    <p class="streak-hadith-text">The Prophet (&#xFDFA;) was asked, &ldquo;What deeds are loved most by Allah?&rdquo; He said, &ldquo;The most regular constant deeds even though they may be few.&rdquo; He added, &ldquo;Don't take upon yourselves, except the deeds which are within your ability.&rdquo;</p>
+    <p class="streak-hadith-text">The Prophet (&#xFDFA;) was asked, &ldquo;What deeds are loved most by Allah?&rdquo; He said, &ldquo;<strong>The most regular constant deeds even though they may be few.</strong>&rdquo; He added, &ldquo;Don't take upon yourselves, except the deeds which are within your ability.&rdquo;</p>
     <p class="streak-hadith-ref">Sahih al-Bukhari 6465</p>
+    <!-- Second hadith, hidden for now
     <hr class="streak-hadith-divider" />
     <p class="streak-hadith-text">Allah's Messenger (&#xFDFA;) said, &ldquo;Do good deeds properly, sincerely and moderately and know that your deeds will not make you enter Paradise, and that the most beloved deed to Allah is the most regular and constant even if it were little.&rdquo;</p>
     <p class="streak-hadith-ref">Sahih al-Bukhari 6464</p>
+    -->
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

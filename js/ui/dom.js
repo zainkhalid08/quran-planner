@@ -16,7 +16,6 @@ export const DOM = {
   startAyah: document.getElementById('startAyah'),
   results: document.getElementById('results'),
   resultsActions: document.getElementById('resultsActions'),
-  resultsFooter: document.getElementById('resultsFooter'),
   planRows: document.getElementById('planRows'),
   planList: document.getElementById('planList'),
   statDays: document.getElementById('statDays'),
